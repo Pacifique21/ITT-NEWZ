@@ -1,103 +1,29 @@
 <!doctype html>
 <html lang="rw">
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
   <meta name="theme-color" content="#101827">
-  <meta name="description" content="ITT NEWS — amakuru, radiyo, siporo na filime mu ndimi 12.">
+  <meta name="description" content="ITT NEWS — amakuru, siporo, radiyo n'ibindi.">
+  <title>ITT NEWS</title><link rel="stylesheet" href="styles.css">
   <link rel="manifest" href="manifest.webmanifest">
-  <link rel="icon" href="icon.svg" type="image/svg+xml">
-  <link rel="stylesheet" href="styles.css">
-  <title>ITT NEWS | News, Sports, Radio & Movies</title>
 </head>
 <body>
-  <header class="topbar">
-    <a class="brand" href="#" aria-label="ITT NEWS home"><span class="brand-mark">ITT</span><span>NEWS</span></a>
-    <div class="header-tools">
-      <label class="language-label" for="language">Language</label>
-      <select id="language" aria-label="Choose language">
-        <option value="rw">Kinyarwanda</option><option value="en">English</option>
-        <option value="fr">Français</option><option value="sw">Kiswahili</option>
-        <option value="ar">العربية</option><option value="es">Español</option>
-        <option value="pt">Português</option><option value="de">Deutsch</option>
-        <option value="zh">中文</option><option value="hi">हिन्दी</option>
-        <option value="ja">日本語</option><option value="ru">Русский</option>
-      </select>
-      <button class="menu-btn" id="menuBtn" aria-label="Open navigation">☰</button>
-    </div>
-  </header>
-
-  <nav class="nav" id="mainNav">
-    <a href="#news" data-i18n="navNews">Amakuru</a>
-    <a href="#sports" data-i18n="navSports">Siporo</a>
-    <a href="#radio" data-i18n="navRadio">Radiyo</a>
-    <a href="#movies" data-i18n="navMovies">Filime</a>
-    <a href="#about" data-i18n="navAbout">Ibyerekeye</a>
-  </nav>
-
-  <main>
-    <section class="hero">
-      <div>
-        <p class="eyebrow"><span class="live-dot"></span><span data-i18n="eyebrow">AMAKURU • SIPORO • IMYIDAGADURO</span></p>
-        <h1 data-i18n="heroTitle">Isi yose, amakuru yose ahantu hamwe.</h1>
-        <p class="hero-copy" data-i18n="heroText">Kurikirana amakuru, radiyo, imikino na filime mu rurimi wifuza.</p>
-        <form class="search" id="searchForm">
-          <input id="searchInput" type="search" placeholder="Shakisha amakuru, ikipe cyangwa filime..." data-i18n-placeholder="searchPlaceholder">
-          <button type="submit" data-i18n="searchBtn">Shakisha</button>
-        </form>
-      </div>
-      <div class="hero-side">
-        <div class="hero-badge">ITT <strong>NEWS</strong></div>
-        <p>RWANDA <span>·</span> AFRICA <span>·</span> WORLD</p>
-      </div>
-    </section>
-
-    <section class="section" id="news">
-      <div class="section-heading"><div><p class="eyebrow">01 / NEWS</p><h2 data-i18n="latestNews">Amakuru mashya</h2></div><span class="section-note" data-i18n="newsNote">Amasoko yizewe gusa</span></div>
-      <div class="filters" id="newsFilters">
-        <button class="chip active" data-category="all" data-i18n="all">Byose</button>
-        <button class="chip" data-category="Rwanda">Rwanda</button>
-        <button class="chip" data-category="Africa">Africa</button>
-        <button class="chip" data-category="World">World</button>
-        <button class="chip" data-category="Business">Business</button>
-        <button class="chip" data-category="Technology">Technology</button>
-      </div>
-      <div class="card-grid" id="newsGrid"><div class="empty-state">Amakuru azagaragara hano nyuma yo guhuza RSS feeds cyangwa News API.</div></div>
-    </section>
-
-    <section class="section dark-section" id="sports">
-      <div class="section-heading"><div><p class="eyebrow">02 / SPORTS</p><h2 data-i18n="sportsTitle">Siporo iri kuba</h2></div><span class="live-label"><i></i> LIVE SCORES</span></div>
-      <div class="sports-types">
-        <span>Football</span><span>Basketball</span><span>Volleyball</span><span>Tennis</span><span>Athletics</span><span>Boxing</span><span>Handball</span><span>Cricket</span><span>Rugby</span><span>Other sports</span>
-      </div>
-      <div class="card-grid" id="sportsGrid"><div class="empty-state dark-empty">Imikino n'amanota bizagaragara hano nyuma yo guhuza sports data API.</div></div>
-      <p class="small-note" data-i18n="sportsRights">Live video igomba guturuka ku batanga serivisi bafite uburenganzira bwo kwerekana imikino.</p>
-    </section>
-
-    <section class="section" id="radio">
-      <div class="section-heading"><div><p class="eyebrow">03 / RADIO</p><h2 data-i18n="radioTitle">Radiyo zo mu Rwanda</h2></div><span class="section-note">LIVE AUDIO</span></div>
-      <div class="card-grid" id="radioGrid"><div class="empty-state">Radiyo zizagaragara hano nyuma yo kongeramo official stream URLs.</div></div>
-    </section>
-
-    <section class="section movies-section" id="movies">
-      <div class="section-heading"><div><p class="eyebrow">04 / ENTERTAINMENT</p><h2 data-i18n="moviesTitle">Filime na documentaries</h2></div><span class="section-note">FREE + PREMIUM</span></div>
-      <div class="filters"><button class="chip active" data-movie-filter="all" data-i18n="allMovies">Filime zose</button><button class="chip" data-movie-filter="free" data-i18n="freeMovies">Ubuntu</button><button class="chip" data-movie-filter="premium">Premium</button></div>
-      <div class="card-grid" id="moviesGrid"><div class="empty-state">Filime zizagaragara hano nyuma yo kongeramo filime zifitiwe uburenganzira cyangwa links zemewe.</div></div>
-      <p class="small-note" data-i18n="movieRights">Twerekana gusa filime dufitiye uburenganzira cyangwa izatanzwe n'abazifite.</p>
-    </section>
-
-    <section class="section translate-section">
-      <div><p class="eyebrow">05 / AI</p><h2 data-i18n="translateTitle">Amakuru mu ndimi 12</h2><p data-i18n="translateText">Hitamo ururimi. AI translation izahuzwa na backend kugira ngo ihindure inkuru mu buryo bwikora.</p></div>
-      <div class="language-cloud">RW <span>EN</span> FR <span>SW</span> AR <span>ES</span> PT <span>DE</span> 中文 <span>HI</span> 日本語 <span>RU</span></div>
-    </section>
-
-    <section class="section about-section" id="about">
-      <p class="eyebrow">ABOUT ITT NEWS</p><h2 data-i18n="aboutTitle">Amakuru n'imyidagaduro ahantu hamwe.</h2>
-      <p data-i18n="aboutText">ITT NEWS ni urubuga rugamije korohereza abantu gukurikirana amakuru, radiyo, siporo na filime. Amasoko n'uburenganzira bw'ibirimo bigomba kugenzurwa mbere yo kubishyira ku rubuga.</p>
-    </section>
-  </main>
-
-  <footer><a class="brand footer-brand" href="#"><span class="brand-mark">ITT</span><span>NEWS</span></a><p>© <span id="year"></span> ITT NEWS. <span data-i18n="footer">Amakuru n'imyidagaduro.</span></p><p class="footer-small">Content is provided by authorized sources. ITT NEWS does not host unauthorized broadcasts or films.</p></footer>
-  <script src="config.js"></script><script src="app.js"></script>
-</body>
-</html>
+<header class="top"><a class="brand" href="#">ITT <span>NEWS</span></a>
+  <nav><a href="#news" data-i18n="news">Amakuru</a><a href="#sports" data-i18n="sports">Siporo</a><a href="#radio" data-i18n="radio">Radiyo</a><a href="#movies" data-i18n="movies">Filime</a></nav>
+  <select id="language" aria-label="Language">
+    <option value="rw">Kinyarwanda</option><option value="en">English</option><option value="fr">Français</option><option value="sw">Kiswahili</option><option value="ar">العربية</option><option value="es">Español</option><option value="pt">Português</option><option value="de">Deutsch</option><option value="zh">中文</option><option value="hi">हिन्दी</option><option value="ja">日本語</option><option value="ru">Русский</option>
+  </select>
+</header>
+<section class="hero"><div><p class="eyebrow">RWANDA • AFRICA • WORLD</p><h1>Amakuru agezweho,<br><em>ahantu hamwe.</em></h1><p>Amakuru, siporo, radiyo n'amashusho byatoranyijwe.</p><a class="cta" href="#news">Reba amakuru</a></div><div class="hero-mark">ITT<br><b>NEWS</b></div></section>
+<main>
+<section id="news"><div class="section-head"><div><p class="eyebrow">01 / HEADLINES</p><h2 data-i18n="latest">Amakuru aheruka</h2></div><button id="refreshNews">Ongera ushyashye</button></div>
+<div class="filters"><button class="filter active" data-category="all">Byose</button><button class="filter" data-category="Rwanda">Rwanda</button><button class="filter" data-category="Africa">Afurika</button><button class="filter" data-category="World">Isi</button></div>
+<div id="newsGrid" class="grid"></div><p class="note" id="newsNote">Amakuru y'icyitegererezo. Huza RSS y'ibitangazamakuru ufitiye uburenganzira muri config.js.</p></section>
+<section id="sports"><div class="section-head"><div><p class="eyebrow">02 / SPORTS</p><h2 data-i18n="scores">Siporo n'ibitego</h2></div></div>
+<div class="panel"><h3>Imikino</h3><p id="sportsText">Aha hazagaragara imikino n'ibitego igihe API yemewe izaba yashyizwe muri config.js.</p><a href="https://www.fifa.com/" target="_blank" rel="noopener">FIFA</a> · <a href="https://www.espn.com/soccer/" target="_blank" rel="noopener">ESPN Football</a></div></section>
+<section id="radio"><div class="section-head"><div><p class="eyebrow">03 / LIVE AUDIO</p><h2 data-i18n="radio">Radiyo</h2></div></div><div id="radioGrid" class="grid"></div><p class="note">Radiyo zizakina gusa iyo nyirazo atanze urubuga rwa stream rwemewe. Nta stream y'impimbano yashyizwemo.</p></section>
+<section id="movies"><div class="section-head"><div><p class="eyebrow">04 / WATCH</p><h2 data-i18n="movies">Filime na documentaries</h2></div></div><div id="movieGrid" class="grid"></div><p class="note">Shyiramo gusa amashusho waremye cyangwa ufitiye uruhushya rwo gutangaza. Ibirango bya Premium hano ni iby'icyitegererezo gusa.</p></section>
+<section id="about"><div class="section-head"><div><p class="eyebrow">05 / ABOUT</p><h2>ITT NEWS</h2></div></div><div class="panel"><p>Urubuga rw'amakuru n'ibindi bikubiye hamwe. Hindura amakuru, radiyo n'amashusho muri <code>config.js</code>.</p><p><b>Indimi 12:</b> ururimi ruhindura amagambo y'ibanze y'urubuga. Guhindura inkuru zose hakoreshejwe AI bisaba backend itekanye; ntushyire API key muri JavaScript igaragara kuri bose.</p></div></section>
+</main><footer>© <span id="year"></span> ITT NEWS · Made for readers</footer>
+<script src="config.js"></script><script src="app.js"></script>
+</body></html>

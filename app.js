@@ -1,16 +1,29 @@
-const translations = {
-rw:{navNews:"Amakuru",navSports:"Siporo",navRadio:"Radiyo",navMovies:"Filime",navAbout:"Ibyerekeye",eyebrow:"AMAKURU • SIPORO • IMYIDAGADURO",heroTitle:"Isi yose, amakuru yose ahantu hamwe.",heroText:"Kurikirana amakuru, radiyo, imikino na filime mu rurimi wifuza.",searchPlaceholder:"Shakisha amakuru, ikipe cyangwa filime...",searchBtn:"Shakisha",latestNews:"Amakuru mashya",newsNote:"Amasoko yizewe gusa",all:"Byose",sportsTitle:"Siporo iri kuba",radioTitle:"Radiyo zo mu Rwanda",moviesTitle:"Filime na documentaries",allMovies:"Filime zose",freeMovies:"Ubuntu",translateTitle:"Amakuru mu ndimi 12",translateText:"Hitamo ururimi. AI translation izahuzwa na backend kugira ngo ihindure inkuru mu buryo bwikora.",aboutTitle:"Amakuru n'imyidagaduro ahantu hamwe.",aboutText:"ITT NEWS ni urubuga rugamije korohereza abantu gukurikirana amakuru, radiyo, siporo na filime. Amasoko n'uburenganzira bw'ibirimo bigomba kugenzurwa mbere yo kubishyira ku rubuga.",footer:"Amakuru n'imyidagaduro."},
-en:{navNews:"News",navSports:"Sports",navRadio:"Radio",navMovies:"Movies",navAbout:"About",eyebrow:"NEWS • SPORTS • ENTERTAINMENT",heroTitle:"The world, all its stories in one place.",heroText:"Follow news, radio, sports and movies in your preferred language.",searchPlaceholder:"Search news, a team or a movie...",searchBtn:"Search",latestNews:"Latest news",newsNote:"Trusted sources only",all:"All",sportsTitle:"Live sports",radioTitle:"Rwanda radio stations",moviesTitle:"Movies & documentaries",allMovies:"All movies",freeMovies:"Free",translateTitle:"News in 12 languages",translateText:"Choose a language. AI translation will be connected through a secure backend.",aboutTitle:"News and entertainment in one place.",aboutText:"ITT NEWS helps people follow news, radio, sports and movies. Sources and content rights must be verified before publishing.",footer:"News and entertainment."},
-fr:{navNews:"Actualités",navSports:"Sports",navRadio:"Radio",navMovies:"Films",navAbout:"À propos",eyebrow:"ACTUALITÉS • SPORTS • DIVERTISSEMENT",heroTitle:"Le monde et ses actualités au même endroit.",heroText:"Suivez les actualités, la radio, le sport et les films dans votre langue.",searchPlaceholder:"Rechercher une actualité, une équipe ou un film...",searchBtn:"Rechercher",latestNews:"Dernières actualités",newsNote:"Sources fiables uniquement",all:"Tout",sportsTitle:"Sports en direct",radioTitle:"Radios du Rwanda",moviesTitle:"Films et documentaires",allMovies:"Tous les films",freeMovies:"Gratuit",translateTitle:"Actualités en 12 langues",translateText:"Choisissez une langue. La traduction IA sera connectée via un backend sécurisé.",aboutTitle:"Actualités et divertissement au même endroit.",aboutText:"ITT NEWS facilite le suivi des actualités, de la radio, du sport et des films. Les sources et les droits doivent être vérifiés.",footer:"Actualités et divertissement."},
-sw:{navNews:"Habari",navSports:"Michezo",navRadio:"Redio",navMovies:"Filamu",navAbout:"Kuhusu",eyebrow:"HABARI • MICHEZO • BURUDANI",heroTitle:"Dunia na habari zake sehemu moja.",heroText:"Fuatilia habari, redio, michezo na filamu kwa lugha unayopendelea.",searchPlaceholder:"Tafuta habari, timu au filamu...",searchBtn:"Tafuta",latestNews:"Habari mpya",newsNote:"Vyanzo vinavyoaminika pekee",all:"Zote",sportsTitle:"Michezo ya moja kwa moja",radioTitle:"Redio za Rwanda",moviesTitle:"Filamu na makala",allMovies:"Filamu zote",freeMovies:"Bure",translateTitle:"Habari katika lugha 12",translateText:"Chagua lugha. Tafsiri ya AI itaunganishwa kupitia backend salama.",aboutTitle:"Habari na burudani sehemu moja.",aboutText:"ITT NEWS hurahisisha kufuatilia habari, redio, michezo na filamu. Vyanzo na haki za maudhui lazima zikaguliwe.",footer:"Habari na burudani."}
+const cfg=window.ITT_CONFIG||{news:[],radios:[],movies:[]};
+const $=s=>document.querySelector(s);
+function renderNews(category="all"){
+ const items=cfg.news.filter(n=>category==="all"||n.category===category);
+ $("#newsGrid").innerHTML=items.map(n=>`<article class="card"><span class="tag">${escapeHtml(n.category)}</span><h3>${escapeHtml(n.title)}</h3><p>${escapeHtml(n.summary)}</p><small>${escapeHtml(n.source)}</small><p><a href="${safeUrl(n.url)}" target="_blank" rel="noopener">Soma ku isoko</a></p></article>`).join("")||"<p>Nta nkuru ihari.</p>";
+}
+function renderRadios(){ $("#radioGrid").innerHTML=cfg.radios.map(r=>`<article class="card"><span class="tag">RADIO / MEDIA</span><h3>${escapeHtml(r.name)}</h3><p>${escapeHtml(r.description)}</p><a href="${safeUrl(r.url)}" target="_blank" rel="noopener">Fungura urubuga rwemewe</a></article>`).join("");}
+function renderMovies(){ $("#movieGrid").innerHTML=cfg.movies.map(m=>`<article class="card"><span class="tag">${escapeHtml(m.type)}</span><h3>${escapeHtml(m.title)}</h3><p>${escapeHtml(m.description)}</p>${m.videoUrl?`<video controls preload="none" style="width:100%" src="${safeUrl(m.videoUrl)}"></video>`:"<small>Video ntirashyirwamo.</small>"}</article>`).join("");}
+function safeUrl(v){try{const u=new URL(v);return ["https:","http:"].includes(u.protocol)?u.href:"#"}catch{return "#"}}
+function escapeHtml(s=""){return String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));}
+document.querySelectorAll(".filter").forEach(b=>b.addEventListener("click",()=>{document.querySelectorAll(".filter").forEach(x=>x.classList.remove("active"));b.classList.add("active");renderNews(b.dataset.category)}));
+$("#refreshNews").addEventListener("click",()=>renderNews(document.querySelector(".filter.active")?.dataset.category||"all"));
+const translations={
+rw:{news:"Amakuru",sports:"Siporo",radio:"Radiyo",movies:"Filime",latest:"Amakuru aheruka",scores:"Siporo n'ibitego"},
+en:{news:"News",sports:"Sports",radio:"Radio",movies:"Movies",latest:"Latest news",scores:"Sports & scores"},
+fr:{news:"Actualités",sports:"Sport",radio:"Radio",movies:"Films",latest:"Dernières nouvelles",scores:"Sports et scores"},
+sw:{news:"Habari",sports:"Michezo",radio:"Redio",movies:"Filamu",latest:"Habari za hivi karibuni",scores:"Michezo na matokeo"},
+ar:{news:"الأخبار",sports:"الرياضة",radio:"الراديو",movies:"الأفلام",latest:"آخر الأخبار",scores:"الرياضة والنتائج"},
+es:{news:"Noticias",sports:"Deportes",radio:"Radio",movies:"Películas",latest:"Últimas noticias",scores:"Deportes y resultados"},
+pt:{news:"Notícias",sports:"Desporto",radio:"Rádio",movies:"Filmes",latest:"Últimas notícias",scores:"Desporto e resultados"},
+de:{news:"Nachrichten",sports:"Sport",radio:"Radio",movies:"Filme",latest:"Neueste Nachrichten",scores:"Sport & Ergebnisse"},
+zh:{news:"新闻",sports:"体育",radio:"广播",movies:"电影",latest:"最新消息",scores:"体育与比分"},
+hi:{news:"समाचार",sports:"खेल",radio:"रेडियो",movies:"फ़िल्में",latest:"ताज़ा खबरें",scores:"खेल और स्कोर"},
+ja:{news:"ニュース",sports:"スポーツ",radio:"ラジオ",movies:"映画",latest:"最新ニュース",scores:"スポーツとスコア"},
+ru:{news:"Новости",sports:"Спорт",radio:"Радио",movies:"Фильмы",latest:"Последние новости",scores:"Спорт и результаты"}
 };
-const languageSelect=document.getElementById('language');
-function setLanguage(lang){const dict=translations[lang]||translations.en;document.documentElement.lang=lang;document.querySelectorAll('[data-i18n]').forEach(el=>{const key=el.dataset.i18n;if(dict[key])el.textContent=dict[key]});document.querySelectorAll('[data-i18n-placeholder]').forEach(el=>{const key=el.dataset.i18nPlaceholder;if(dict[key])el.placeholder=dict[key]});document.documentElement.dir=lang==='ar'?'rtl':'ltr';}
-languageSelect.addEventListener('change',e=>setLanguage(e.target.value));
-document.getElementById('menuBtn').addEventListener('click',()=>document.getElementById('mainNav').classList.toggle('open'));
-document.getElementById('year').textContent=new Date().getFullYear();
-document.getElementById('searchForm').addEventListener('submit',e=>{e.preventDefault();const q=document.getElementById('searchInput').value.trim();if(q)alert('Search will work when news, sports and movie sources are connected. Query: '+q)});
-document.querySelectorAll('#newsFilters .chip').forEach(btn=>btn.addEventListener('click',()=>{document.querySelectorAll('#newsFilters .chip').forEach(x=>x.classList.remove('active'));btn.classList.add('active')}));
-document.querySelectorAll('[data-movie-filter]').forEach(btn=>btn.addEventListener('click',()=>{document.querySelectorAll('[data-movie-filter]').forEach(x=>x.classList.remove('active'));btn.classList.add('active')}));
-setLanguage('rw');
-/* Content is intentionally not fabricated. Populate the grids from verified sources via a backend/API. */
+$("#language").addEventListener("change",e=>{const t=translations[e.target.value]||translations.rw;document.querySelectorAll("[data-i18n]").forEach(el=>{const k=el.dataset.i18n;if(t[k])el.textContent=t[k]});document.documentElement.lang=e.target.value;});
+$("#year").textContent=new Date().getFullYear();
+renderNews();renderRadios();renderMovies();

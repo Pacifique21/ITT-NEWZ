@@ -1,41 +1,37 @@
-ITT NEWS — STARTER WEBSITE
-==========================
+ITT NEWS — STARTER PACKAGE
 
-This is the first front-end version of ITT NEWS. It is responsive and includes:
-- News section and categories
-- Sports section for all sports
-- Rwanda radio directory area
-- Movies area with Free and Premium filters
-- Language selector for 12 languages
-- PWA manifest and offline shell caching
-- Search UI
+UPLOAD these files to the ROOT of your GitHub repository:
+index.html
+styles.css
+app.js
+config.js
+manifest.webmanifest
 
-IMPORTANT: This package is a working website shell, not a fully connected live media service yet.
-No fake current headlines, fake radio streams, unauthorized sports broadcasts, or pirated films are included.
+WHAT IS INCLUDED
+- Responsive ITT NEWS homepage
+- Rwanda / Africa / World news sections (sample entries and links)
+- Sports section with links; live scores need an approved data provider and secure backend
+- Radio/media links; these are links, not guaranteed live audio streams
+- Movie/documentary cards and optional HTML5 video player for content you own or are licensed to show
+- Language selector with 12 languages for core navigation labels
 
-WHAT MUST BE CONNECTED FOR REAL LIVE CONTENT
-1. News: verified RSS feeds or a licensed news API. Respect publisher terms and link to original articles.
-2. Sports: a licensed sports-data provider for fixtures/scores. For live video, use official broadcaster/player embeds or authorized links only.
-3. Radio: official stream URLs supplied by each radio station.
-4. Movies: films you own, have licensed, or are explicitly authorized to stream. Premium access needs a secure backend, user accounts and a trusted payment provider.
-5. AI translation: a secure backend endpoint. Keep all AI/API keys as Cloudflare Worker Secrets; NEVER put keys in index.html, app.js or config.js.
+IMPORTANT LIMITATIONS
+This is a front-end starter, not a fully live news/sports service.
+Sample news is not breaking news. Replace it with accurate stories and link to original publishers.
+Do not copy full articles or stream copyrighted films without permission.
+A real premium subscription requires secure server-side accounts and payment verification; the label in this demo does not restrict access.
+AI translation and private API keys require a secure backend. Never put API keys in config.js or app.js.
+GitHub Pages hosts static files only; it does not run Node/Express backend code.
 
-DEPLOY TO CLOUDFLARE PAGES
-1. Extract this ZIP on your computer.
-2. Open Cloudflare Dashboard > Workers & Pages > Create > Pages > Upload assets.
-3. Upload the extracted folder contents (index.html must be at the root).
-4. Deploy and open the provided pages.dev URL.
-5. Add a custom domain later from the Pages project > Custom domains.
+PUBLISH
+1. Extract the ZIP on your computer.
+2. Open https://github.com/Pacifique21/ITT-NEWZ
+3. Add file > Upload files.
+4. Upload all files from this folder (not the ZIP itself).
+5. Commit changes to main.
+6. Wait for GitHub Pages to redeploy, then refresh:
+   https://pacifique21.github.io/ITT-NEWZ/
 
-PWA NOTE
-The site includes a web manifest and service worker file. Register sw.js from app.js or add:
-if ('serviceWorker' in navigator) window.addEventListener('load',()=>navigator.serviceWorker.register('/sw.js'));
-This starter's UI is designed to be extended after the content APIs are selected.
-
-SECURITY / BILLING
-- Never share API keys in chat or place them in public browser code.
-- Any paid APIs, domain purchases, movie licences or subscriptions should be reviewed and handled with a trusted adult.
-- Do not collect card details directly. Use a reputable payment provider and secure server-side verification.
-
-NEXT DEVELOPMENT STEP
-Choose verified news feeds, official radio stream URLs, a sports-data provider, and licensed movie catalogue. Then build Cloudflare Pages Functions/Workers endpoints to fetch and normalize content securely.
+CUSTOMIZE
+Edit config.js to replace sample news, radio links, and movie entries.
+Only add videoUrl values for videos you own or have permission to publish.
