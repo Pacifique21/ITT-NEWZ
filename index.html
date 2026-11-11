@@ -1,342 +1,190 @@
 
-"use strict";
-
-const IPTV_COUNTRY_URL =
-  "https://iptv-org.github.io/iptv/countries/";
-
-const COUNTRY_LIST_URL =
-  "https://raw.githubusercontent.com/iptv-org/api/master/data/countries.json";
-
-const $ = (selector) => document.querySelector(selector);
-
-const tvGrid = $("#tvGrid");
-const rwandaTVGrid = $("#rwandaTVGrid");
-const tvStatus = $("#tvStatus");
-const countrySelect = $("#countrySelect");
-const tvSearch = $("#tvSearch");
-const tvPlayer = $("#tvPlayer");
-const playerMessage = $("#playerMessage");
-const playingTitle = $("#playingTitle");
-const externalTV = $("#externalTV");
-
-let allTV = [];
-let hlsInstance = null;
-
-const rwandaRadios = [
-  ["Radio Rwanda", "https://www.rba.co.rw/"],
-  ["Magic FM", "https://www.rba.co.rw/radio/2/Magic-Fm"],
-  ["Radio Rubavu", "https://www.rba.co.rw/"],
-  ["Radio Nyagatare", "https://www.rba.co.rw/"],
-  ["Radio Inteko", "https://www.rba.co.rw/"],
-  ["Radio Huye", "https://www.rba.co.rw/"],
-  ["Radio Musanze", "https://www.rba.co.rw/"],
-  ["Radio Rusizi", "https://www.rba.co.rw/"],
-  ["Radio 10", "https://radiotv10.rw/radio/"],
-  ["Kiss FM", "https://www.kissfm.rw/"],
-  ["KT Radio", "https://www.ktradio.rw/"],
-  ["Radio1 Rwanda", "https://radio1.rw/"],
-  ["Flash FM", "https://flashfm.rw/"],
-  ["Isango Star", "https://isangostar.rw/"],
-  ["Royal FM", "https://royalfm.rw/"],
-  ["Radio Maria Rwanda", "https://www.radiomaria.rw/"],
-  ["Capital FM", "https://www.capitalfm.co.ug/"],
-  ["B&B Kigali", "https://www.bbkigalifm.com/"],
-  ["Energy Radio", "https://rwandamedia.org.rw/radio-stations"],
-  ["Radio Ishingiro", "https://rwandamedia.org.rw/radio-stations"],
-  ["Radio Izuba", "https://rwandamedia.org.rw/radio-stations"],
-  ["Urban Radio", "https://rwandamedia.org.rw/radio-stations"],
-  ["Hope Radio", "https://rwandamedia.org.rw/radio-stations"],
-  ["Umwezi Radio", "https://rwandamedia.org.rw/radio-stations"],
-  ["The Voice of Hope", "https://rwandamedia.org.rw/radio-stations"],
-  ["Authentic Radio", "https://rwandamedia.org.rw/radio-stations"]
-];
-
-function safeURL(value) {
-  try {
-    const url = new URL(value);
-    if (url.protocol === "https:" || url.protocol === "http:") {
-      return url.href;
-    }
-  } catch (error) {}
-  return "";
-}
-
-function parseM3U(text) {
-  const lines = text.split(/\r?\n/);
-  const channels = [];
-  let current = null;
-
-  for (const line of lines) {
-    const item = line.trim();
-
-    if (item.startsWith("#EXTINF:")) {
-      const name = item.split(",").pop().trim();
-      const logo = item.match(/tvg-logo="([^"]*)"/i);
-      const group = item.match(/group-title="([^"]*)"/i);
-
-      current = {
-        name: name || "TV Channel",
-        logo: logo ? logo[1] : "",
-        group: group ? group[1] : "Television",
-        url: ""
-      };
-    } else if (item && !item.startsWith("#") && current) {
-      const url = safeURL(item);
-
-      if (url) {
-        current.url = url;
-        channels.push(current);
-      }
-
-      current = null;
-    }
-  }
-
-  return channels;
-}
-
-function showEmpty(container, message) {
-  container.innerHTML = "";
-  const p = document.createElement("p");
-  p.className = "empty";
-  p.textContent = message;
-  container.appendChild(p);
-}
-
-function makeCard(title, description, buttons) {
-  const card = document.createElement("article");
-  card.className = "channel-card";
-
-  const heading = document.createElement("h3");
-  heading.textContent = title;
-
-  const paragraph = document.createElement("p");
-  paragraph.textContent = description;
-
-  card.append(heading, paragraph);
-
-  buttons.forEach((buttonInfo) => {
-    const button = document.createElement("button");
-    button.textContent = buttonInfo.label;
-    button.addEventListener("click", buttonInfo.action);
-    card.appendChild(button);
-  });
-
-  return card;
-}
-
-function stopTV() {
-  if (hlsInstance) {
-    hlsInstance.destroy();
-    hlsInstance = null;
-  }
-
-  tvPlayer.pause();
-  tvPlayer.removeAttribute("src");
-  tvPlayer.load();
-}
-
-function playTV(channel) {
-  const url = safeURL(channel.url);
-  if (!url) return;
-
-  stopTV();
-
-  playingTitle.textContent = channel.name;
-  playerMessage.textContent = "Turimo kugerageza gufungura iyi channel...";
-  externalTV.href = url;
-  externalTV.hidden = false;
-
-  if (url.includes(".m3u8")) {
-    if (window.Hls && Hls.isSupported()) {
-      hlsInstance = new Hls();
-      hlsInstance.loadSource(url);
-      hlsInstance.attachMedia(tvPlayer);
-
-      hlsInstance.on(Hls.Events.MANIFEST_PARSED, () => {
-        tvPlayer.play().catch(() => {
-          playerMessage.textContent =
-            "Kanda Play kugira ngo utangire kureba.";
-        });
-      });
-
-      hlsInstance.on(Hls.Events.ERROR, (event, data) => {
-        if (data.fatal) {
-          playerMessage.textContent =
-            "Iyi stream ntishoboye gukinirwa hano. Gerageza kuyifungura hanze.";
-        }
-      });
-    } else if (tvPlayer.canPlayType("application/vnd.apple.mpegurl")) {
-      tvPlayer.src = url;
-      tvPlayer.play().catch(() => {});
-    } else {
-      playerMessage.textContent =
-        "Browser yawe ntishyigikira iyi video format. Fungura link yayo hanze.";
-    }
-  } else {
-    tvPlayer.src = url;
-    tvPlayer.play().catch(() => {
-      playerMessage.textContent =
-        "Kanda Play cyangwa ufungure channel ku rubuga rwayo.";
-    });
-  }
-
-  document.querySelector("#live-tv").scrollIntoView({
-    behavior: "smooth"
-  });
-}
-
-function renderTV(channels, container) {
-  container.innerHTML = "";
-
-  if (!channels.length) {
-    showEmpty(container, "Nta channel yabonetse. Ongera ugerageze.");
-    return;
-  }
-
-  channels.forEach((channel) => {
-    const card = makeCard(
-      channel.name,
-      channel.group || "Television channel",
-      [{
-        label: "▶ WATCH LIVE",
-        action: () => playTV(channel)
-      }]
-    );
-
-    container.appendChild(card);
-  });
-}
-
-async function loadTV(countryCode) {
-  tvStatus.textContent = "Turimo gushakisha channels...";
-
-  try {
-    const response = await fetch(
-      IPTV_COUNTRY_URL + encodeURIComponent(countryCode.toLowerCase()) + ".m3u"
-    );
-
-    if (!response.ok) {
-      throw new Error("Playlist ntibonetse");
-    }
-
-    const text = await response.text();
-    allTV = parseM3U(text);
-
-    const query = tvSearch.value.trim().toLowerCase();
-    const filtered = allTV.filter((channel) =>
-      channel.name.toLowerCase().includes(query)
-    );
-
-    renderTV(filtered, tvGrid);
-
-    tvStatus.textContent =
-      allTV.length + " channels zabonetse muri playlist y'iki gihugu.";
-
-    if (countryCode.toLowerCase() === "rw") {
-      renderTV(allTV, rwandaTVGrid);
-    }
-  } catch (error) {
-    tvStatus.textContent =
-      "Ntibyashobotse kubona channels. Reba internet wongere ugerageze.";
-
-    showEmpty(tvGrid, "Playlist ntibonetse. Gerageza nyuma.");
-  }
-}
-
-async function loadCountries() {
-  try {
-    const response = await fetch(COUNTRY_LIST_URL);
-    if (!response.ok) throw new Error("Countries not available");
-
-    const countries = await response.json();
-
-    countries
-      .filter((country) => country.code && country.name)
-      .sort((a, b) => a.name.localeCompare(b.name))
-      .forEach((country) => {
-        const option = document.createElement("option");
-        option.value = country.code.toLowerCase();
-        option.textContent = country.name;
-        countrySelect.appendChild(option);
-      });
-
-    countrySelect.value = "rw";
-  } catch (error) {
-    console.warn("Country list ntibonetse; Rwanda iracyaboneka.");
-  }
-}
-
-function renderRadios(search = "") {
-  const query = search.toLowerCase();
-
-  const matches = rwandaRadios.filter(([name]) =>
-    name.toLowerCase().includes(query)
-  );
-
-  $("#radioGrid").innerHTML = "";
-
-  if (!matches.length) {
-    showEmpty($("#radioGrid"), "Nta radio ihuye n'ibyo washakishije.");
-    return;
-  }
-
-  matches.forEach(([name, website]) => {
-    const card = makeCard(
-      name,
-      "Radio yo mu Rwanda. Fungura urubuga rwayo kugira ngo wumve ibiganiro.",
-      [{
-        label: "🎧 LISTEN",
-        action: () => window.open(website, "_blank", "noopener")
-      }]
-    );
-
-    $("#radioGrid").appendChild(card);
-  });
-}
-
-function setupRadioPlayer() {
-  const radioPlayer = $("#radioPlayer");
-
-  radioPlayer.addEventListener("error", () => {
-    $("#radioMessage").textContent =
-      "Radio stream ntibonetse. Gerageza urubuga rwa radio.";
-  });
-}
-
-function startApp() {
-  $("#year").textContent = new Date().getFullYear();
-
-  renderRadios();
-  setupRadioPlayer();
-
-  loadCountries().then(() => loadTV("rw"));
-
-  $("#loadCountry").addEventListener("click", () => {
-    loadTV(countrySelect.value);
-  });
-
-  countrySelect.addEventListener("change", () => {
-    loadTV(countrySelect.value);
-  });
-
-  tvSearch.addEventListener("input", () => {
-    const query = tvSearch.value.trim().toLowerCase();
-
-    const filtered = allTV.filter((channel) =>
-      channel.name.toLowerCase().includes(query)
-    );
-
-    renderTV(filtered, tvGrid);
-
-    if (countrySelect.value === "rw") {
-      renderTV(filtered, rwandaTVGrid);
-    }
-  });
-
-  $("#radioSearch").addEventListener("input", (event) => {
-    renderRadios(event.target.value);
-  });
-}
-
-document.addEventListener("DOMContentLoaded", startApp);
+<!DOCTYPE html>
+<html lang="rw">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#101827">
+  <meta name="description" content="ITT NEWS - TV, Radio, News, Sports and Movies">
+  <title>ITT NEWS - Worldwide Media</title>
+
+  <link rel="stylesheet" href="styles.css">
+
+  <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
+  <script defer src="app.js"></script>
+</head>
+
+<body>
+
+<header class="header">
+  <a href="#home" class="logo">ITT <span>NEWS</span></a>
+
+  <button id="menuToggle" class="menu-toggle" type="button">☰</button>
+
+  <nav id="mainNav">
+    <a href="#live-tv">Live TV</a>
+    <a href="#rwanda-tv">Rwanda TV</a>
+    <a href="#radio">Radio</a>
+    <a href="#news">News</a>
+    <a href="#sports">Sports</a>
+    <a href="#films">Films</a>
+  </nav>
+</header>
+
+<main id="home">
+
+<section class="hero">
+  <p>WELCOME TO ITT NEWS</p>
+  <h1>All News and Entertainment <span>In One Place</span></h1>
+  <p>Watch television, listen to radio and discover news from around the world.</p>
+  <a href="#live-tv" class="main-button">Explore Now</a>
+</section>
+
+<section class="section" id="live-tv">
+  <h2>🌍 Worldwide Live TV</h2>
+
+  <div class="filters">
+    <select id="countrySelect">
+      <option value="rw">Rwanda</option>
+      <option value="ug">Uganda</option>
+      <option value="ke">Kenya</option>
+      <option value="tz">Tanzania</option>
+      <option value="bi">Burundi</option>
+      <option value="cd">DR Congo</option>
+      <option value="za">South Africa</option>
+      <option value="ng">Nigeria</option>
+      <option value="gh">Ghana</option>
+      <option value="us">USA</option>
+      <option value="gb">United Kingdom</option>
+      <option value="fr">France</option>
+      <option value="de">Germany</option>
+      <option value="in">India</option>
+      <option value="jp">Japan</option>
+      <option value="br">Brazil</option>
+      <option value="ca">Canada</option>
+      <option value="au">Australia</option>
+    </select>
+
+    <button id="loadCountry" type="button">Load Channels</button>
+
+    <input id="tvSearch" type="search" placeholder="Search TV channels...">
+  </div>
+
+  <p id="tvStatus" class="status">Loading channels...</p>
+
+  <div class="player">
+    <h3 id="playingTitle">Select a TV channel</h3>
+
+    <video id="tvPlayer" controls playsinline></video>
+
+    <p id="playerMessage">Choose a channel below to watch.</p>
+
+    <a id="externalTV" href="#" target="_blank"
+       rel="noopener noreferrer" hidden>Open channel website</a>
+  </div>
+
+  <div id="tvGrid" class="grid"></div>
+</section>
+
+<section class="section alternate" id="rwanda-tv">
+  <h2>🇷🇼 Rwanda TV Channels</h2>
+  <div id="rwandaTVGrid" class="grid"></div>
+</section>
+
+<section class="section" id="radio">
+  <h2>📻 Rwanda Radio Stations</h2>
+
+  <input id="radioSearch" type="search" placeholder="Search radio...">
+
+  <div class="player">
+    <h3 id="radioPlaying">Radio Player</h3>
+    <audio id="radioPlayer" controls></audio>
+    <p id="radioMessage">
+      Select a radio station below. Some stations open their official websites.
+    </p>
+  </div>
+
+  <div id="radioGrid" class="grid"></div>
+</section>
+
+<section class="section alternate" id="news">
+  <h2>📰 Latest News</h2>
+
+  <div class="grid">
+    <a class="card link-card" href="https://www.rba.co.rw/" target="_blank" rel="noopener">
+      <h3>RBA Rwanda</h3>
+      <p>Rwanda news and updates</p>
+    </a>
+
+    <a class="card link-card" href="https://www.bbc.com/news" target="_blank" rel="noopener">
+      <h3>BBC News</h3>
+      <p>International news</p>
+    </a>
+
+    <a class="card link-card" href="https://www.aljazeera.com/" target="_blank" rel="noopener">
+      <h3>Al Jazeera</h3>
+      <p>World news</p>
+    </a>
+
+    <a class="card link-card" href="https://www.dw.com/" target="_blank" rel="noopener">
+      <h3>DW News</h3>
+      <p>International reports</p>
+    </a>
+  </div>
+</section>
+
+<section class="section" id="sports">
+  <h2>⚽ Sports</h2>
+
+  <div class="grid">
+    <a class="card link-card" href="https://www.bbc.com/sport" target="_blank" rel="noopener">
+      <h3>BBC Sport</h3>
+      <p>Sports news and results</p>
+    </a>
+
+    <a class="card link-card" href="https://www.espn.com/" target="_blank" rel="noopener">
+      <h3>ESPN</h3>
+      <p>International sports</p>
+    </a>
+
+    <a class="card link-card" href="https://www.fifa.com/" target="_blank" rel="noopener">
+      <h3>FIFA</h3>
+      <p>Football news</p>
+    </a>
+
+    <a class="card link-card" href="https://www.cafonline.com/" target="_blank" rel="noopener">
+      <h3>CAF</h3>
+      <p>African football</p>
+    </a>
+  </div>
+</section>
+
+<section class="section alternate" id="films">
+  <h2>🎬 Movies and Films</h2>
+
+  <div class="grid">
+    <a class="card link-card" href="https://www.youtube.com/movies" target="_blank" rel="noopener">
+      <h3>YouTube Movies</h3>
+      <p>Movies available legally on YouTube</p>
+    </a>
+
+    <a class="card link-card" href="https://archive.org/details/feature_films" target="_blank" rel="noopener">
+      <h3>Internet Archive</h3>
+      <p>Publicly available films</p>
+    </a>
+
+    <a class="card link-card" href="https://www.kanopy.com/" target="_blank" rel="noopener">
+      <h3>Kanopy</h3>
+      <p>Films through participating libraries</p>
+    </a>
+  </div>
+</section>
+
+</main>
+
+<footer>
+  <p>© <span id="year"></span> ITT NEWS. All Rights Reserved.</p>
+</footer>
+
+</body>
+</html>
