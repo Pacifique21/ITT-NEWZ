@@ -1,365 +1,342 @@
 
-<!DOCTYPE html>
-<html lang="rw">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="theme-color" content="#101827">
-  <meta name="description" content="ITT NEWS - Rwanda, Africa and World News, Sports, Radio, Movies and Videos.">
-
-  <title>ITT NEWS | Latest News Worldwide</title>
-
-  <link rel="stylesheet" href="styles.css">
-  <link rel="manifest" href="manifest.webmanifest">
-
-</head>
-
-<body>
-
-<!-- HEADER -->
-<header class="top">
-
-  <a class="brand" href="#">
-    ITT <span>NEWS</span>
-  </a>
-
-  <nav>
-    <a href="#news" data-i18n="news">Amakuru</a>
-    <a href="#sports" data-i18n="sports">Siporo</a>
-    <a href="#radio" data-i18n="radio">Radiyo</a>
-    <a href="#movies" data-i18n="movies">Filime</a>
-    <a href="#newsVideos">Videos</a>
-  </nav>
-
-  <select id="language" aria-label="Choose language">
-    <option value="rw">Kinyarwanda</option>
-    <option value="en">English</option>
-    <option value="fr">Français</option>
-    <option value="sw">Kiswahili</option>
-    <option value="ar">العربية</option>
-    <option value="es">Español</option>
-    <option value="pt">Português</option>
-    <option value="de">Deutsch</option>
-    <option value="zh">中文</option>
-    <option value="hi">हिन्दी</option>
-    <option value="ja">日本語</option>
-    <option value="ru">Русский</option>
-  </select>
-
-</header>
-
-
-<!-- HERO -->
-<section class="hero">
-
-  <div>
-    <p class="eyebrow">RWANDA • AFRICA • WORLD</p>
-
-    <h1>
-      Amakuru agezweho,
-      <br>
-      <em>ahantu hamwe.</em>
-    </h1>
-
-    <p>
-      Amakuru, siporo, radiyo, filime
-      n'amashusho byatoranyijwe.
-    </p>
-
-    <a class="cta" href="#news">
-      Reba amakuru
-    </a>
-  </div>
-
-  <div class="hero-mark">
-    ITT
-    <br>
-    <b>NEWS</b>
-  </div>
-
-</section>
-
-
-<main>
-
-  <!-- NEWS SECTION -->
-  <section id="news">
-
-    <div class="section-head">
-      <div>
-        <p class="eyebrow">01 / NEWS</p>
-        <h2 data-i18n="news">Amakuru agezweho</h2>
-      </div>
-    </div>
-
-    <div class="filters">
-
-      <button class="filter active" data-category="all">
-        Byose
-      </button>
-
-      <button class="filter" data-category="Rwanda">
-        Rwanda
-      </button>
-
-      <button class="filter" data-category="Africa">
-        Afurika
-      </button>
-
-      <button class="filter" data-category="World">
-        Isi
-      </button>
-
-    </div>
-
-    <div id="newsGrid" class="grid"></div>
-
-    <p class="note" id="newsNote">
-      Amakuru agezweho azagaragara hano.
-    </p>
-
-  </section>
-
-
-  <!-- SPORTS SECTION -->
-  <section id="sports">
-
-    <div class="section-head">
-      <div>
-        <p class="eyebrow">02 / SPORTS</p>
-        <h2 data-i18n="scores">Siporo n'ibitego</h2>
-      </div>
-    </div>
-
-    <div class="panel">
-
-      <h3>Imikino</h3>
-
-      <p id="sportsText">
-        Aha hazagaragara amakuru ya siporo,
-        imikino n'ibitego igihe amakuru yemewe azaba ahujwe.
-      </p>
-
-      <a href="https://www.fifa.com/"
-         target="_blank"
-         rel="noopener">
-        FIFA
-      </a>
-
-      ·
-
-      <a href="https://www.espn.com/soccer/"
-         target="_blank"
-         rel="noopener">
-        ESPN Football
-      </a>
-
-    </div>
-
-  </section>
-
-
-  <!-- RADIO SECTION -->
-  <section id="radio">
-
-    <div class="section-head">
-      <div>
-        <p class="eyebrow">03 / LIVE AUDIO</p>
-        <h2 data-i18n="radio">Radiyo</h2>
-      </div>
-    </div>
-
-    <div id="radioGrid" class="grid"></div>
-
-    <p class="note">
-      Radiyo zizakina gusa iyo stream zabo zemewe ziboneka.
-    </p>
-
-  </section>
-
-
-  <!-- MOVIES SECTION -->
-  <section id="movies">
-
-    <div class="section-head">
-      <div>
-        <p class="eyebrow">04 / WATCH</p>
-        <h2 data-i18n="movies">
-          Filime na documentaries
-        </h2>
-      </div>
-    </div>
-
-    <div id="movieGrid" class="grid"></div>
-
-    <p class="note">
-      Shyiramo gusa filime n'amashusho ufitiye
-      uburenganzira bwo gutangaza.
-    </p>
-
-  </section>
-
-
-  <!-- NEWS VIDEOS SECTION -->
-  <section id="newsVideos" class="news-videos">
-
-    <div class="news-videos-heading">
-
-      <span>ITT NEWS / VIDEO CENTER</span>
-
-      <h2>📺 LIVE TV & LATEST NEWS VIDEOS</h2>
-
-      <p>
-        Amakuru mashya aturutse kuri televiziyo zitandukanye.
-      </p>
-
-    </div>
-
-
-    <div class="news-videos-grid">
-
-
-      <!-- TV10 RWANDA -->
-      <article class="news-video-card">
-
-        <h3>🇷🇼 TV10 RWANDA</h3>
-
-        <iframe
-          src="https://www.youtube.com/embed/videoseries?list=UU4p7042h6Fj_cOnXIzS_sag"
-          title="TV10 Rwanda News Videos"
-          loading="lazy"
-          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-          referrerpolicy="strict-origin-when-cross-origin"
-          allowfullscreen>
-        </iframe>
-
-        <a
-          href="https://www.youtube.com/@officialradiotv10rwanda/videos"
-          target="_blank"
-          rel="noopener">
-          Reba andi makuru ya TV10
-        </a>
-
-      </article>
-
-
-      <!-- BBC NEWS -->
-      <article class="news-video-card">
-
-        <h3>🌍 BBC NEWS</h3>
-
-        <iframe
-          src="https://www.youtube.com/embed/videoseries?list=UU16niRr50-MSBwiO3YDb3RA"
-          title="BBC News Videos"
-          loading="lazy"
-          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-          referrerpolicy="strict-origin-when-cross-origin"
-          allowfullscreen>
-        </iframe>
-
-        <a
-          href="https://www.youtube.com/@BBCNews/videos"
-          target="_blank"
-          rel="noopener">
-          Reba andi makuru ya BBC
-        </a>
-
-      </article>
-
-
-      <!-- RBA -->
-      <article class="news-video-card">
-
-        <h3>🇷🇼 RBA / RWANDA TV</h3>
-
-        <p>
-          Amakuru n'ibiganiro bitangazwa na RBA.
-        </p>
-
-        <a
-          href="https://www.rba.co.rw/"
-          target="_blank"
-          rel="noopener">
-          Fungura RBA
-        </a>
-
-      </article>
-
-
-      <!-- TV10 LIVE -->
-      <article class="news-video-card">
-
-        <h3>📡 TV10 LIVE</h3>
-
-        <p>
-          Reba televiziyo ya TV10 Rwanda.
-        </p>
-
-        <a
-          href="https://radiotv10.rw/tvpage/"
-          target="_blank"
-          rel="noopener">
-          Fungura TV10 Live
-        </a>
-
-      </article>
-
-
-    </div>
-
-  </section>
-
-
-  <!-- ABOUT SECTION -->
-  <section id="about">
-
-    <div class="section-head">
-      <div>
-        <p class="eyebrow">06 / ABOUT</p>
-        <h2>ITT NEWS</h2>
-      </div>
-    </div>
-
-    <div class="panel">
-
-      <p>
-        ITT NEWS ni urubuga ruhuriza hamwe
-        amakuru, siporo, radiyo, filime
-        n'amashusho atandukanye.
-      </p>
-
-      <p>
-        <b>Indimi 12:</b>
-        Kinyarwanda, English, French, Kiswahili,
-        Arabic, Spanish, Portuguese, German,
-        Chinese, Hindi, Japanese na Russian.
-      </p>
-
-      <p>
-        Hindura amakuru, radiyo na filime muri
-        <code>config.js</code>.
-      </p>
-
-    </div>
-
-  </section>
-
-</main>
-
-
-<!-- FOOTER -->
-<footer>
-
-  © <span id="year"></span> ITT NEWS
-
-  · Made for readers
-
-</footer>
-
-
-<!-- JAVASCRIPT FILES -->
-<script src="config.js"></script>
-<script src="app.js"></script>
-
-</body>
-</html>
+"use strict";
+
+const IPTV_COUNTRY_URL =
+  "https://iptv-org.github.io/iptv/countries/";
+
+const COUNTRY_LIST_URL =
+  "https://raw.githubusercontent.com/iptv-org/api/master/data/countries.json";
+
+const $ = (selector) => document.querySelector(selector);
+
+const tvGrid = $("#tvGrid");
+const rwandaTVGrid = $("#rwandaTVGrid");
+const tvStatus = $("#tvStatus");
+const countrySelect = $("#countrySelect");
+const tvSearch = $("#tvSearch");
+const tvPlayer = $("#tvPlayer");
+const playerMessage = $("#playerMessage");
+const playingTitle = $("#playingTitle");
+const externalTV = $("#externalTV");
+
+let allTV = [];
+let hlsInstance = null;
+
+const rwandaRadios = [
+  ["Radio Rwanda", "https://www.rba.co.rw/"],
+  ["Magic FM", "https://www.rba.co.rw/radio/2/Magic-Fm"],
+  ["Radio Rubavu", "https://www.rba.co.rw/"],
+  ["Radio Nyagatare", "https://www.rba.co.rw/"],
+  ["Radio Inteko", "https://www.rba.co.rw/"],
+  ["Radio Huye", "https://www.rba.co.rw/"],
+  ["Radio Musanze", "https://www.rba.co.rw/"],
+  ["Radio Rusizi", "https://www.rba.co.rw/"],
+  ["Radio 10", "https://radiotv10.rw/radio/"],
+  ["Kiss FM", "https://www.kissfm.rw/"],
+  ["KT Radio", "https://www.ktradio.rw/"],
+  ["Radio1 Rwanda", "https://radio1.rw/"],
+  ["Flash FM", "https://flashfm.rw/"],
+  ["Isango Star", "https://isangostar.rw/"],
+  ["Royal FM", "https://royalfm.rw/"],
+  ["Radio Maria Rwanda", "https://www.radiomaria.rw/"],
+  ["Capital FM", "https://www.capitalfm.co.ug/"],
+  ["B&B Kigali", "https://www.bbkigalifm.com/"],
+  ["Energy Radio", "https://rwandamedia.org.rw/radio-stations"],
+  ["Radio Ishingiro", "https://rwandamedia.org.rw/radio-stations"],
+  ["Radio Izuba", "https://rwandamedia.org.rw/radio-stations"],
+  ["Urban Radio", "https://rwandamedia.org.rw/radio-stations"],
+  ["Hope Radio", "https://rwandamedia.org.rw/radio-stations"],
+  ["Umwezi Radio", "https://rwandamedia.org.rw/radio-stations"],
+  ["The Voice of Hope", "https://rwandamedia.org.rw/radio-stations"],
+  ["Authentic Radio", "https://rwandamedia.org.rw/radio-stations"]
+];
+
+function safeURL(value) {
+  try {
+    const url = new URL(value);
+    if (url.protocol === "https:" || url.protocol === "http:") {
+      return url.href;
+    }
+  } catch (error) {}
+  return "";
+}
+
+function parseM3U(text) {
+  const lines = text.split(/\r?\n/);
+  const channels = [];
+  let current = null;
+
+  for (const line of lines) {
+    const item = line.trim();
+
+    if (item.startsWith("#EXTINF:")) {
+      const name = item.split(",").pop().trim();
+      const logo = item.match(/tvg-logo="([^"]*)"/i);
+      const group = item.match(/group-title="([^"]*)"/i);
+
+      current = {
+        name: name || "TV Channel",
+        logo: logo ? logo[1] : "",
+        group: group ? group[1] : "Television",
+        url: ""
+      };
+    } else if (item && !item.startsWith("#") && current) {
+      const url = safeURL(item);
+
+      if (url) {
+        current.url = url;
+        channels.push(current);
+      }
+
+      current = null;
+    }
+  }
+
+  return channels;
+}
+
+function showEmpty(container, message) {
+  container.innerHTML = "";
+  const p = document.createElement("p");
+  p.className = "empty";
+  p.textContent = message;
+  container.appendChild(p);
+}
+
+function makeCard(title, description, buttons) {
+  const card = document.createElement("article");
+  card.className = "channel-card";
+
+  const heading = document.createElement("h3");
+  heading.textContent = title;
+
+  const paragraph = document.createElement("p");
+  paragraph.textContent = description;
+
+  card.append(heading, paragraph);
+
+  buttons.forEach((buttonInfo) => {
+    const button = document.createElement("button");
+    button.textContent = buttonInfo.label;
+    button.addEventListener("click", buttonInfo.action);
+    card.appendChild(button);
+  });
+
+  return card;
+}
+
+function stopTV() {
+  if (hlsInstance) {
+    hlsInstance.destroy();
+    hlsInstance = null;
+  }
+
+  tvPlayer.pause();
+  tvPlayer.removeAttribute("src");
+  tvPlayer.load();
+}
+
+function playTV(channel) {
+  const url = safeURL(channel.url);
+  if (!url) return;
+
+  stopTV();
+
+  playingTitle.textContent = channel.name;
+  playerMessage.textContent = "Turimo kugerageza gufungura iyi channel...";
+  externalTV.href = url;
+  externalTV.hidden = false;
+
+  if (url.includes(".m3u8")) {
+    if (window.Hls && Hls.isSupported()) {
+      hlsInstance = new Hls();
+      hlsInstance.loadSource(url);
+      hlsInstance.attachMedia(tvPlayer);
+
+      hlsInstance.on(Hls.Events.MANIFEST_PARSED, () => {
+        tvPlayer.play().catch(() => {
+          playerMessage.textContent =
+            "Kanda Play kugira ngo utangire kureba.";
+        });
+      });
+
+      hlsInstance.on(Hls.Events.ERROR, (event, data) => {
+        if (data.fatal) {
+          playerMessage.textContent =
+            "Iyi stream ntishoboye gukinirwa hano. Gerageza kuyifungura hanze.";
+        }
+      });
+    } else if (tvPlayer.canPlayType("application/vnd.apple.mpegurl")) {
+      tvPlayer.src = url;
+      tvPlayer.play().catch(() => {});
+    } else {
+      playerMessage.textContent =
+        "Browser yawe ntishyigikira iyi video format. Fungura link yayo hanze.";
+    }
+  } else {
+    tvPlayer.src = url;
+    tvPlayer.play().catch(() => {
+      playerMessage.textContent =
+        "Kanda Play cyangwa ufungure channel ku rubuga rwayo.";
+    });
+  }
+
+  document.querySelector("#live-tv").scrollIntoView({
+    behavior: "smooth"
+  });
+}
+
+function renderTV(channels, container) {
+  container.innerHTML = "";
+
+  if (!channels.length) {
+    showEmpty(container, "Nta channel yabonetse. Ongera ugerageze.");
+    return;
+  }
+
+  channels.forEach((channel) => {
+    const card = makeCard(
+      channel.name,
+      channel.group || "Television channel",
+      [{
+        label: "▶ WATCH LIVE",
+        action: () => playTV(channel)
+      }]
+    );
+
+    container.appendChild(card);
+  });
+}
+
+async function loadTV(countryCode) {
+  tvStatus.textContent = "Turimo gushakisha channels...";
+
+  try {
+    const response = await fetch(
+      IPTV_COUNTRY_URL + encodeURIComponent(countryCode.toLowerCase()) + ".m3u"
+    );
+
+    if (!response.ok) {
+      throw new Error("Playlist ntibonetse");
+    }
+
+    const text = await response.text();
+    allTV = parseM3U(text);
+
+    const query = tvSearch.value.trim().toLowerCase();
+    const filtered = allTV.filter((channel) =>
+      channel.name.toLowerCase().includes(query)
+    );
+
+    renderTV(filtered, tvGrid);
+
+    tvStatus.textContent =
+      allTV.length + " channels zabonetse muri playlist y'iki gihugu.";
+
+    if (countryCode.toLowerCase() === "rw") {
+      renderTV(allTV, rwandaTVGrid);
+    }
+  } catch (error) {
+    tvStatus.textContent =
+      "Ntibyashobotse kubona channels. Reba internet wongere ugerageze.";
+
+    showEmpty(tvGrid, "Playlist ntibonetse. Gerageza nyuma.");
+  }
+}
+
+async function loadCountries() {
+  try {
+    const response = await fetch(COUNTRY_LIST_URL);
+    if (!response.ok) throw new Error("Countries not available");
+
+    const countries = await response.json();
+
+    countries
+      .filter((country) => country.code && country.name)
+      .sort((a, b) => a.name.localeCompare(b.name))
+      .forEach((country) => {
+        const option = document.createElement("option");
+        option.value = country.code.toLowerCase();
+        option.textContent = country.name;
+        countrySelect.appendChild(option);
+      });
+
+    countrySelect.value = "rw";
+  } catch (error) {
+    console.warn("Country list ntibonetse; Rwanda iracyaboneka.");
+  }
+}
+
+function renderRadios(search = "") {
+  const query = search.toLowerCase();
+
+  const matches = rwandaRadios.filter(([name]) =>
+    name.toLowerCase().includes(query)
+  );
+
+  $("#radioGrid").innerHTML = "";
+
+  if (!matches.length) {
+    showEmpty($("#radioGrid"), "Nta radio ihuye n'ibyo washakishije.");
+    return;
+  }
+
+  matches.forEach(([name, website]) => {
+    const card = makeCard(
+      name,
+      "Radio yo mu Rwanda. Fungura urubuga rwayo kugira ngo wumve ibiganiro.",
+      [{
+        label: "🎧 LISTEN",
+        action: () => window.open(website, "_blank", "noopener")
+      }]
+    );
+
+    $("#radioGrid").appendChild(card);
+  });
+}
+
+function setupRadioPlayer() {
+  const radioPlayer = $("#radioPlayer");
+
+  radioPlayer.addEventListener("error", () => {
+    $("#radioMessage").textContent =
+      "Radio stream ntibonetse. Gerageza urubuga rwa radio.";
+  });
+}
+
+function startApp() {
+  $("#year").textContent = new Date().getFullYear();
+
+  renderRadios();
+  setupRadioPlayer();
+
+  loadCountries().then(() => loadTV("rw"));
+
+  $("#loadCountry").addEventListener("click", () => {
+    loadTV(countrySelect.value);
+  });
+
+  countrySelect.addEventListener("change", () => {
+    loadTV(countrySelect.value);
+  });
+
+  tvSearch.addEventListener("input", () => {
+    const query = tvSearch.value.trim().toLowerCase();
+
+    const filtered = allTV.filter((channel) =>
+      channel.name.toLowerCase().includes(query)
+    );
+
+    renderTV(filtered, tvGrid);
+
+    if (countrySelect.value === "rw") {
+      renderTV(filtered, rwandaTVGrid);
+    }
+  });
+
+  $("#radioSearch").addEventListener("input", (event) => {
+    renderRadios(event.target.value);
+  });
+}
+
+document.addEventListener("DOMContentLoaded", startApp);
