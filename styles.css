@@ -47,3 +47,67 @@ stepupnewsVideo():
     padding: 12px;
   }
 }
+
+.news-videos {
+  display: block;
+  width: 100%;
+  padding: 30px 20px;
+  margin: 25px 0;
+  background: #101827;
+  color: white;
+  border-radius: 14px;
+}
+
+.news-videos-heading {
+  margin-bottom: 22px;
+}
+
+.news-videos-heading span {
+  color: #f5b400;
+  font-size: 12px;
+  font-weight: bold;
+  letter-spacing: 2px;
+}
+
+.news-videos-heading h2 {
+  font-size: 27px;
+  margin: 10px 0;
+}
+
+.news-videos-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 22px;
+}
+
+.news-video-card {
+  min-width: 0;
+  padding: 15px;
+  background: #1d293b;
+  border-radius: 12px;
+}
+
+.news-video-card h3 {
+  margin: 5px 0 14px;
+}
+
+.news-video-card iframe {
+  display: block;
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  border: 0;
+  border-radius: 9px;
+}
+
+.news-video-card a {
+  display: inline-block;
+  margin-top: 14px;
+  color: #ffd04a;
+  font-weight: bold;
+}
+
+@media (max-width: 700px) {
+  .news-videos-grid {
+    grid-template-columns: 1fr;
+  }
+}
