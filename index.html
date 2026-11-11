@@ -1,26 +1,20 @@
-
 <!DOCTYPE html>
 <html lang="rw">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="theme-color" content="#101827">
-  <title>ITT NEWS | Live TV & Radio</title>
-
-  <link rel="stylesheet" href="./styles.css">
-  <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
-  <script defer src="./app.js"></script>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#0b1220">
+  <title>ITT NEWS | TV, Radio, News & Sports</title>
+  <link rel="stylesheet" href="styles.css">
+  <script src="https://cdn.jsdelivr.net/npm/hls.js@1"></script>
+  <script src="app.js" defer></script>
 </head>
-
 <body>
-<header class="header">
-  <a class="logo" href="#home">ITT <span>NEWS</span></a>
-  <button id="menuToggle" class="menu-toggle" type="button"
-          aria-label="Fungura menu" aria-expanded="false">☰</button>
 
-  <nav id="mainNav">
-    <a href="#live-tv">Live TV</a>
-    <a href="#rwanda-tv">Rwanda TV</a>
+<header class="topbar">
+  <a class="logo" href="#">ITT<span>NEWS</span></a>
+  <nav>
+    <a href="#tv">Live TV</a>
     <a href="#radio">Radio</a>
     <a href="#news">News</a>
     <a href="#sports">Sports</a>
@@ -28,155 +22,117 @@
   </nav>
 </header>
 
-<main id="home">
+<main>
   <section class="hero">
-    <p class="eyebrow">WELCOME TO ITT NEWS</p>
-    <h1>TV, Radio and News <span>in One Place</span></h1>
-    <p>Reba TV, umve radio kandi ukurikirane amakuru utavuye kuri ITT NEWS.</p>
-    <a class="main-button" href="#live-tv">Tangira ubu</a>
+    <p class="eyebrow">INFORMATION • ENTERTAINMENT • LIVE</p>
+    <h1>Welcome to <span>ITT NEWS</span></h1>
+    <p>Amakuru, televiziyo, amaradiyo na siporo ahurira ahantu hamwe.</p>
   </section>
 
-  <section class="section" id="live-tv">
-    <h2>🌍 Worldwide Live TV</h2>
+  <section id="tv" class="section">
+    <h2>📺 Live Television</h2>
+    <p class="muted">Hitamo igihugu urebe channels ziboneka.</p>
 
-    <div class="filters">
-      <select id="countrySelect" aria-label="Hitamo igihugu">
+    <div class="toolbar">
+      <select id="countrySelect">
         <option value="rw">Rwanda</option>
         <option value="ug">Uganda</option>
         <option value="ke">Kenya</option>
         <option value="tz">Tanzania</option>
         <option value="bi">Burundi</option>
-        <option value="cd">DR Congo</option>
         <option value="za">South Africa</option>
         <option value="ng">Nigeria</option>
         <option value="gh">Ghana</option>
-        <option value="us">United States</option>
         <option value="gb">United Kingdom</option>
+        <option value="us">United States</option>
         <option value="fr">France</option>
         <option value="de">Germany</option>
         <option value="in">India</option>
         <option value="jp">Japan</option>
-        <option value="br">Brazil</option>
-        <option value="ca">Canada</option>
-        <option value="au">Australia</option>
       </select>
-
-      <button id="loadCountry" type="button">Shakisha TV</button>
-      <input id="tvSearch" type="search" placeholder="Shakisha TV...">
+      <button id="loadCountry">Load Channels</button>
+      <input id="tvSearch" type="search" placeholder="Shaka channel...">
     </div>
 
-    <p id="tvStatus" class="status" role="status">Tegereza...</p>
-
-    <div class="player-panel">
-      <h3 id="playingTitle">Hitamo televiziyo</h3>
-      <video id="tvPlayer" controls playsinline preload="none"></video>
-      <p id="playerMessage">Televiziyo wahisemo izakinira hano.</p>
-      <a id="externalTV" href="#" target="_blank"
-         rel="noopener noreferrer" hidden>Fungura urubuga rw'iyi TV</a>
+    <div class="player-card">
+      <h3 id="playingTitle">Nta channel iratoranywa</h3>
+      <video id="tvPlayer" controls playsinline></video>
+      <p id="tvStatus" class="status" aria-live="polite">
+        Hitamo channel kugira ngo utangire kureba.
+      </p>
     </div>
 
-    <div id="tvGrid" class="grid"></div>
+    <div id="tvGrid" class="channel-grid"></div>
   </section>
 
-  <section class="section alternate" id="rwanda-tv">
-    <h2>🇷🇼 Rwanda TV</h2>
-    <div id="rwandaTVGrid" class="grid"></div>
-  </section>
+  <section id="radio" class="section">
+    <h2>📻 Live Radio</h2>
+    <p class="muted">
+      Radio ikinira hano iyo ufite umurongo wayo w'amajwi (audio stream URL).
+    </p>
 
-  <section class="section" id="radio">
-    <h2>📻 Listen to Radio Inside ITT NEWS</h2>
-    <p class="muted">Hitamo radio. Izakinira hano niba urubuga rwayo rwemera kwerekanwa muri ITT NEWS.</p>
-
-    <div class="player-panel">
-      <h3 id="radioPlaying">Radio Player</h3>
-
-      <audio id="radioPlayer" controls preload="none"></audio>
-
-      <iframe id="radioFrame"
-        title="Radio live player"
-        allow="autoplay; encrypted-media"
-        referrerpolicy="strict-origin-when-cross-origin"
-        hidden></iframe>
-
-      <p id="radioMessage" class="muted">
-        Hitamo radio iri hasi kugira ngo uyumve.
+    <div class="player-card">
+      <h3 id="radioTitle">ITT NEWS Radio Player</h3>
+      <audio id="radioPlayer" controls></audio>
+      <p id="radioStatus" class="status" aria-live="polite">
+        Shyiramo umurongo wa radio kugira ngo uyumve.
       </p>
 
-      <a id="radioExternal" href="#" target="_blank"
-         rel="noopener noreferrer" hidden>
-        Niba radio itakinze hano, fungura urubuga rwayo
-      </a>
-    </div>
-
-    <input id="radioSearch" type="search" placeholder="Shakisha radio...">
-    <div id="radioGrid" class="grid"></div>
-  </section>
-
-  <section class="section alternate" id="news">
-    <h2>📰 News</h2>
-    <div class="grid">
-      <a class="card link-card" href="https://www.rba.co.rw/"
-         target="_blank" rel="noopener noreferrer">
-        <h3>RBA Rwanda</h3><p>Amakuru yo mu Rwanda</p>
-      </a>
-      <a class="card link-card" href="https://www.bbc.com/news"
-         target="_blank" rel="noopener noreferrer">
-        <h3>BBC News</h3><p>International news</p>
-      </a>
-      <a class="card link-card" href="https://www.aljazeera.com/"
-         target="_blank" rel="noopener noreferrer">
-        <h3>Al Jazeera</h3><p>World news</p>
-      </a>
-      <a class="card link-card" href="https://www.dw.com/"
-         target="_blank" rel="noopener noreferrer">
-        <h3>DW News</h3><p>International reports</p>
-      </a>
+      <label for="radioUrl">Radio audio stream URL</label>
+      <input id="radioUrl" type="url"
+             placeholder="Shyiramo direct audio stream URL">
+      <button id="playRadio">Play Radio</button>
     </div>
   </section>
 
-  <section class="section" id="sports">
+  <section id="news" class="section">
+    <h2>📰 Latest News</h2>
+    <div class="info-grid">
+      <article class="info-card">
+        <h3>Rwanda News</h3>
+        <p>Amakuru yo mu Rwanda. Kanda ku rubuga rw'itangazamakuru kugira ngo usome amakuru yemewe.</p>
+        <a href="https://www.rba.co.rw/" target="_blank" rel="noopener">RBA Website</a>
+      </article>
+      <article class="info-card">
+        <h3>International News</h3>
+        <p>Amakuru mpuzamahanga.</p>
+        <a href="https://www.bbc.com/news" target="_blank" rel="noopener">BBC News</a>
+      </article>
+    </div>
+  </section>
+
+  <section id="sports" class="section">
     <h2>⚽ Sports</h2>
-    <div class="grid">
-      <a class="card link-card" href="https://www.bbc.com/sport"
-         target="_blank" rel="noopener noreferrer">
-        <h3>BBC Sport</h3><p>Sports news</p>
-      </a>
-      <a class="card link-card" href="https://www.espn.com/"
-         target="_blank" rel="noopener noreferrer">
-        <h3>ESPN</h3><p>International sports</p>
-      </a>
-      <a class="card link-card" href="https://www.fifa.com/"
-         target="_blank" rel="noopener noreferrer">
-        <h3>FIFA</h3><p>Football news</p>
-      </a>
-      <a class="card link-card" href="https://www.cafonline.com/"
-         target="_blank" rel="noopener noreferrer">
-        <h3>CAF</h3><p>African football</p>
-      </a>
+    <div class="info-grid">
+      <article class="info-card">
+        <h3>Sports News</h3>
+        <p>Amakuru ya siporo n'ibikorwa by'imikino.</p>
+        <a href="https://www.bbc.com/sport" target="_blank" rel="noopener">BBC Sport</a>
+      </article>
+      <article class="info-card">
+        <h3>Football</h3>
+        <p>Amakuru y'umupira w'amaguru ku isi.</p>
+        <a href="https://www.fifa.com/" target="_blank" rel="noopener">FIFA</a>
+      </article>
     </div>
   </section>
 
-  <section class="section alternate" id="films">
+  <section id="films" class="section">
     <h2>🎬 Films</h2>
-    <div class="grid">
-      <a class="card link-card" href="https://www.youtube.com/movies"
-         target="_blank" rel="noopener noreferrer">
-        <h3>YouTube Movies</h3><p>Filime zemewe kuri YouTube</p>
-      </a>
-      <a class="card link-card" href="https://archive.org/details/feature_films"
-         target="_blank" rel="noopener noreferrer">
-        <h3>Internet Archive</h3><p>Filime zemewe gusangizwa</p>
-      </a>
-      <a class="card link-card" href="https://www.kanopy.com/"
-         target="_blank" rel="noopener noreferrer">
-        <h3>Kanopy</h3><p>Filime ziboneka binyuze mu bafatanyabikorwa</p>
-      </a>
+    <div class="info-card">
+      <h3>Films and Entertainment</h3>
+      <p>
+        Iki gice kizajya cyongerwamo filime zifite uburenganzira bwo
+        kwerekanwa ku mugaragaro. Nta filime izakina hatarashyizwemo
+        umuyoboro wemewe wo kuyireberaho.
+      </p>
     </div>
   </section>
 </main>
 
 <footer>
-  <p>© <span id="year"></span> ITT NEWS</p>
+  <p>© 2026 ITT NEWS. All rights reserved.</p>
 </footer>
+
 </body>
 </html>
