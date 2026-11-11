@@ -1,117 +1,247 @@
-// ITT NEWS FILMS PLAYER
 
-const films = [
-  {
-    title: "Big Buck Bunny",
-    year: "2008",
-    category: "Animation / Comedy",
-    video: "https://upload.wikimedia.org/wikipedia/commons/c/c0/Big_Buck_Bunny_4K.webm/Big_Buck_Bunny_4K.webm.720p.vp9.webm",
-    description: "A funny animated adventure from Blender Foundation.",
-    credit: "Blender Foundation — CC BY 3.0",
-    source: "https://peach.blender.org/about/"
-  },
-  {
-    title: "Sintel",
-    year: "2010",
-    category: "Fantasy / Animation",
-    video: "https://upload.wikimedia.org/wikipedia/commons/f/f1/Sintel_movie_4K.webm/Sintel_movie_4K.webm.720p.vp9.webm",
-    description: "An animated fantasy adventure from Blender Foundation.",
-    credit: "Blender Foundation — CC BY 3.0",
-    source: "https://studio.blender.org/films/sintel/"
-  },
-  {
-    title: "Tears of Steel",
-    year: "2012",
-    category: "Science Fiction",
-    video: "https://download.blender.org/demo/movies/ToS/tears_of_steel_720p.mov",
-    description: "A science-fiction film made by Blender Institute.",
-    credit: "Blender Foundation — CC BY 3.0",
-    source: "https://mango.blender.org/"
-  }
-];
+"use strict";
 
-const filmGrid = document.getElementById("filmGrid");
-const filmSearch = document.getElementById("filmSearch");
-const filmPlayer = document.getElementById("filmPlayer");
-const filmTitle = document.getElementById("filmTitle");
-const filmDescription = document.getElementById("filmDescription");
-const filmStatus = document.getElementById("filmStatus");
-const filmCredit = document.getElementById("filmCredit");
+document.addEventListener("DOMContentLoaded", () => {
+  const $ = id => document.getElementById(id);
 
-function showFilm(film) {
-  filmPlayer.pause();
+  const tvVideo = $("tvVideo");
+  const tvPlaceholder = $("tvPlaceholder");
+  const tvStatus = $("tvStatus");
+  const radioAudio = $("radioAudio");
+  const radioStatus = $("radioStatus");
 
-  filmTitle.textContent = film.title;
-  filmDescription.textContent =
-    `${film.year} · ${film.category} — ${film.description}`;
+  $("year").textContent = new Date().getFullYear();
 
-  filmCredit.textContent = film.credit;
-  filmStatus.textContent = "Turimo gufungura filime...";
+  /*
+   * Add only verified, authorized direct stream URLs here.
+   * TV: HLS .m3u8 or supported direct video URL.
+   * Radio: direct MP3/AAC/AAC+ stream URL.
+   *
+   * Official webpage URLs are NOT direct stream URLs.
+   */
 
-  filmPlayer.src = film.video;
-  filmPlayer.load();
+  const tvChannels = [
+    {
+      name: "Rwanda TV",
+      country: "Rwanda",
+      type: "page",
+      url: "https://www.rba.co.rw/"
+    },
+    {
+      name: "Flash TV",
+      country: "Rwanda",
+      type: "page",
+      url: "https://flash.rw/"
+    },
+    {
+      name: "TV10",
+      country: "Rwanda",
+      type: "page",
+      url: "https://radiotv10.rw/"
+    }
+  ];
 
-  filmPlayer.play()
-    .then(() => {
-      filmStatus.textContent = "Filime iri gukinira muri ITT NEWS.";
-    })
-    .catch(error => {
-      console.error("Film playback error:", error);
-      filmStatus.textContent =
-        "Filime ntiyafungutse. Gerageza indi cyangwa urebe internet yawe.";
-    });
-}
+  const radioStations = [
+    {
+      name: "Radio Rwanda",
+      country: "Rwanda",
+      type: "page",
+      url: "https://www.rba.co.rw/"
+    },
+    {
+      name: "Flash FM",
+      country: "Rwanda",
+      type: "page",
+      url: "https://flash.rw/"
+    },
+    {
+      name: "Radio 10",
+      country: "Rwanda",
+      type: "page",
+      url: "https://radiotv10.rw/radio/"
+    }
+  ];
 
-function renderFilms(list) {
-  filmGrid.replaceChildren();
+  let activeHls = null;
 
-  if (list.length === 0) {
-    filmGrid.textContent = "Nta filime ibonetse.";
-    return;
+  function status(element, message) {
+    if (element) element.textContent = message;
   }
 
-  list.forEach(film => {
-    const card = document.createElement("article");
-    card.className = "film-card";
+  function stopTV() {
+    if (activeHls) {
+      activeHls.destroy();
+      activeHls = null;
+    }
 
-    const title = document.createElement("h3");
-    title.textContent = film.title;
+    tvVideo.pause();
+    tvVideo.removeAttribute("src");
+    tvVideo.load();
+    tvVideo.style.display = "none";
+  }
 
-    const details = document.createElement("p");
-    details.textContent = `${film.year} · ${film.category}`;
+  function playTV(channel) {
+    stopTV();
 
-    const button = document.createElement("button");
-    button.type = "button";
-    button.textContent = "▶ REBA FILIME";
+    if (channel.type === "page") {
+      tvPlaceholder.style.display = "flex";
+      tvPlaceholder.querySelector("p").textContent =
+        channel.name + " ntirabona direct stream yemejwe muri player.";
 
-    button.addEventListener("click", () => {
-      showFilm(film);
+      status(
+        tvStatus,
+        "Iyi ni official website, si direct TV stream. Ishobora kudashobora gukinirwa muri ITT NEWS."
+      );
+      return;
+    }
+
+    tvPlaceholder.style.display = "none";
+    tvVideo.style.display = "block";
+
+    const url = channel.url;
+    const isHls = /\.m3u8($|\?)/i.test(url);
+
+    if (isHls && window.Hls && Hls.isSupported()) {
+      activeHls = new Hls();
+      activeHls.loadSource(url);
+      activeHls.attachMedia(tvVideo);
+
+      activeHls.on(Hls.Events.MANIFEST_PARSED, () => {
+        status(tvStatus, "Stream yiteguye. Kanda Play.");
+      });
+
+      activeHls.on(Hls.Events.ERROR, (_, data) => {
+        if (data.fatal) {
+          status(tvStatus, "Stream ntiyashoboye gukina. Reba URL cyangwa uburenganzira bwa stream.");
+          stopTV();
+          tvPlaceholder.style.display = "flex";
+        }
+      });
+    } else if (tvVideo.canPlayType("application/vnd.apple.mpegurl")) {
+      tvVideo.src = url;
+    } else {
+      tvVideo.src = url;
+    }
+
+    tvVideo.play().catch(() => {
+      status(tvStatus, "Kanda Play kugira ngo utangire kureba.");
     });
+  }
 
-    card.append(title, details, button);
-    filmGrid.appendChild(card);
+  function playRadio(station) {
+    radioAudio.pause();
+    radioAudio.removeAttribute("src");
+    radioAudio.load();
+
+    if (station.type === "page") {
+      $("radioName").textContent = station.name;
+      $("radioCountry").textContent = station.country;
+      status(
+        radioStatus,
+        "Nta direct audio stream yemejwe iraboneka kuri iyi station. Official page iraboneka kuri link iri hasi."
+      );
+
+      let link = $("radioOfficialLink");
+
+      if (!link) {
+        link = document.createElement("a");
+        link.id = "radioOfficialLink";
+        link.className = "red-button";
+        link.target = "_blank";
+        link.rel = "noopener noreferrer";
+        link.textContent = "Fungura Radio official page";
+        radioAudio.after(link);
+      }
+
+      link.href = station.url;
+      return;
+    }
+
+    const link = $("radioOfficialLink");
+    if (link) link.remove();
+
+    $("radioName").textContent = station.name;
+    $("radioCountry").textContent = station.country;
+
+    radioAudio.src = station.url;
+    radioAudio.load();
+
+    radioAudio.play().then(() => {
+      status(radioStatus, "Radio iri gukina.");
+    }).catch(() => {
+      status(radioStatus, "Kanda Play kuri audio player kugira ngo wumve radio.");
+    });
+  }
+
+  function renderStations(items, container, type) {
+    container.replaceChildren();
+
+    if (!items.length) {
+      const empty = document.createElement("p");
+      empty.textContent = "Nta muyoboro wabonetse.";
+      container.appendChild(empty);
+      return;
+    }
+
+    items.forEach(item => {
+      const button = document.createElement("button");
+      button.className = "station-button";
+      button.type = "button";
+
+      const details = document.createElement("span");
+      const name = document.createElement("strong");
+      const country = document.createElement("small");
+
+      name.textContent = item.name;
+      country.textContent = item.country;
+
+      details.append(name, country);
+
+      const action = document.createElement("span");
+      action.textContent = type === "tv" ? "WATCH ▶" : "LISTEN ▶";
+
+      button.append(details, action);
+
+      button.addEventListener("click", () => {
+        if (type === "tv") playTV(item);
+        else playRadio(item);
+      });
+
+      container.appendChild(button);
+    });
+  }
+
+  renderStations(tvChannels, $("tvChannels"), "tv");
+  renderStations(radioStations, $("radioStations"), "radio");
+
+  function search(input, items, container, type) {
+    input.addEventListener("input", () => {
+      const query = input.value.trim().toLowerCase();
+
+      const results = items.filter(item =>
+        (item.name + " " + item.country).toLowerCase().includes(query)
+      );
+
+      renderStations(results, container, type);
+    });
+  }
+
+  search($("tvSearch"), tvChannels, $("tvChannels"), "tv");
+  search($("radioSearch"), radioStations, $("radioStations"), "radio");
+
+  $("menuToggle").addEventListener("click", () => {
+    $("navigation").classList.toggle("active");
   });
-}
 
-filmSearch.addEventListener("input", () => {
-  const search = filmSearch.value.toLowerCase();
+  $("navigation").querySelectorAll("a").forEach(link => {
+    link.addEventListener("click", () => {
+      $("navigation").classList.remove("active");
+    });
+  });
 
-  const results = films.filter(film =>
-    `${film.title} ${film.category} ${film.year}`
-      .toLowerCase()
-      .includes(search)
-  );
+  window.addEventListener("beforeunload", () => {
+    if (activeHls) activeHls.destroy();
+  });
 
-  renderFilms(results);
+  console.log("ITT NEWS media player initialized.");
 });
-
-filmPlayer.addEventListener("error", () => {
-  filmStatus.textContent =
-    "Iyi video ntiyashoboye gukinwa. Bishobora guterwa na format cyangwa stream.";
-});
-
-filmPlayer.addEventListener("playing", () => {
-  filmStatus.textContent = "Filime iri gukinira muri ITT NEWS.";
-});
-
-renderFilms(films);
