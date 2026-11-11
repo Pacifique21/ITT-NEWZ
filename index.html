@@ -1,28 +1,144 @@
-<section id="films" class="section">
-  <h2>🎬 ITT NEWS Films</h2>
-  <p class="muted">Hitamo filime, ihite ikinira hano kuri website.</p>
 
-  <input id="filmSearch" type="search" placeholder="Shaka filime...">
+<!DOCTYPE html>
+<html lang="rw">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#080d18">
+  <title>ITT NEWS | Live Media</title>
+  <link rel="stylesheet" href="styles.css">
+  <script src="https://cdn.jsdelivr.net/npm/hls.js@1.5.17/dist/hls.min.js"></script>
+</head>
+<body>
 
-  <div class="film-layout">
-    <div class="film-player">
-      <h3 id="filmTitle">Hitamo filime</h3>
+<header class="topbar">
+  <a class="logo" href="#home">ITT <span>NEWS</span></a>
+  <button id="menuToggle" aria-label="Open navigation">☰</button>
+  <nav id="navigation">
+    <a href="#home">Home</a>
+    <a href="#news">News</a>
+    <a href="#sports">Sports</a>
+    <a href="#tv">Live TV</a>
+    <a href="#radio">Radio</a>
+    <a href="#movies">Movies</a>
+  </nav>
+  <select id="language" aria-label="Language">
+    <option value="en">English</option>
+    <option value="rw">Kinyarwanda</option>
+    <option value="fr">Français</option>
+    <option value="sw">Kiswahili</option>
+    <option value="es">Español</option>
+    <option value="pt">Português</option>
+    <option value="ar">Arabic</option>
+    <option value="zh">Chinese</option>
+    <option value="hi">Hindi</option>
+    <option value="de">German</option>
+    <option value="it">Italian</option>
+    <option value="ja">Japanese</option>
+  </select>
+</header>
 
-      <video id="filmPlayer" controls playsinline preload="metadata">
-        Browser yawe ntishyigikira video player.
-      </video>
+<main id="home">
+  <section class="hero">
+    <p class="eyebrow">RWANDA • AFRICA • THE WORLD</p>
+    <h1>THE WORLD IS<br><span>ON ITT NEWS</span></h1>
+    <p>News, sports, television, radio and entertainment in one place.</p>
+    <a class="red-button" href="#tv">WATCH LIVE</a>
+  </section>
 
-      <p id="filmDescription">
-        Filime wahisemo izakinira aha.
-      </p>
+  <section class="quick-menu">
+    <a href="#news">📰 News</a>
+    <a href="#sports">⚽ Sports</a>
+    <a href="#tv">📺 Live TV</a>
+    <a href="#radio">📻 Radio</a>
+    <a href="#movies">🎬 Movies</a>
+  </section>
 
-      <p id="filmStatus" aria-live="polite">
-        Tegereje guhitamo filime.
-      </p>
+  <section class="section" id="news">
+    <h2>Latest News</h2>
+    <div id="newsContainer" class="cards">
+      <p>News will be added here.</p>
+    </div>
+  </section>
 
-      <p id="filmCredit"></p>
+  <section class="section" id="sports">
+    <h2>Sports</h2>
+    <div id="sportsContainer" class="cards">
+      <p>Sports updates will be added here.</p>
+    </div>
+  </section>
+
+  <section class="section" id="tv">
+    <div class="section-title">
+      <div>
+        <p class="eyebrow">WATCH FROM YOUR WEBSITE</p>
+        <h2>Live Television</h2>
+      </div>
+      <span class="live">● LIVE</span>
     </div>
 
-    <div id="filmGrid" class="film-grid"></div>
-  </div>
-</section>
+    <div class="player-layout">
+      <div class="screen">
+        <div id="tvPlaceholder" class="placeholder">
+          <span>📺</span>
+          <p>Select a TV channel</p>
+        </div>
+        <video id="tvVideo" controls playsinline></video>
+        <div id="tvStatus" class="status" aria-live="polite">
+          Select a channel to start.
+        </div>
+      </div>
+
+      <aside class="station-panel">
+        <input id="tvSearch" type="search" placeholder="Search TV channels">
+        <div id="tvChannels"></div>
+      </aside>
+    </div>
+  </section>
+
+  <section class="section" id="radio">
+    <div class="section-title">
+      <div>
+        <p class="eyebrow">LISTEN FROM YOUR WEBSITE</p>
+        <h2>Live Radio</h2>
+      </div>
+      <span class="live">● ON AIR</span>
+    </div>
+
+    <div class="radio-screen">
+      <div class="radio-icon">📻</div>
+      <h3 id="radioName">Choose a radio station</h3>
+      <p id="radioCountry">Rwanda and international stations</p>
+      <audio id="radioAudio" controls preload="none"></audio>
+      <div id="radioStatus" class="status" aria-live="polite">
+        Select a station to listen.
+      </div>
+    </div>
+
+    <input id="radioSearch" class="search" type="search"
+      placeholder="Search radio stations">
+    <div id="radioStations" class="cards"></div>
+  </section>
+
+  <section class="section" id="movies">
+    <h2>Movies</h2>
+    <div id="movieContainer" class="cards">
+      <p>Authorized films will appear here.</p>
+    </div>
+  </section>
+
+  <section class="section" id="about">
+    <h2>About ITT NEWS</h2>
+    <p>ITT NEWS brings news and entertainment together in one digital platform.</p>
+  </section>
+</main>
+
+<footer>
+  <a class="logo" href="#home">ITT <span>NEWS</span></a>
+  <p>Your world. Your news.</p>
+  <p>© <span id="year"></span> ITT NEWS</p>
+</footer>
+
+<script src="app.js"></script>
+</body>
+</html>
