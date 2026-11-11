@@ -1,22 +1,123 @@
-/* ITT NEWS CONFIG
-   Replace sample entries with verified information.
-   Do not paste passwords, private API keys, or payment secrets here.
-*/
+
+"use strict";
+
 window.ITT_CONFIG = {
+  siteName: "ITT NEWS",
+  defaultLanguage: "en",
+
+  languages: [
+    { code: "en", name: "English" },
+    { code: "rw", name: "Kinyarwanda" },
+    { code: "fr", name: "Français" },
+    { code: "sw", name: "Kiswahili" },
+    { code: "ar", name: "Arabic" },
+    { code: "es", name: "Spanish" },
+    { code: "pt", name: "Portuguese" },
+    { code: "de", name: "German" },
+    { code: "zh", name: "Chinese" },
+    { code: "hi", name: "Hindi" },
+    { code: "ja", name: "Japanese" },
+    { code: "it", name: "Italian" }
+  ],
+
   news: [
-    {category:"Rwanda",title:"Amakuru y'u Rwanda",summary:"Aha shyiramo incamake y'inkuru yemewe.",source:"Inkuru y'icyitegererezo",url:"https://www.rba.co.rw/"},
-    {category:"Africa",title:"Amakuru yo muri Afurika",summary:"Shyiramo inkuru yizewe yo muri Afurika.",source:"Inkuru y'icyitegererezo",url:"https://www.africanews.com/"},
-    {category:"World",title:"Amakuru mpuzamahanga",summary:"Shyiramo inkuru mpuzamahanga yemewe.",source:"Inkuru y'icyitegererezo",url:"https://www.bbc.com/news"}
+    {
+      title: "BBC News",
+      category: "International",
+      description: "International news and current affairs.",
+      url: "https://www.bbc.com/news"
+    },
+    {
+      title: "Rwanda Broadcasting Agency",
+      category: "Rwanda",
+      description: "Rwanda news and public information.",
+      url: "https://www.rba.co.rw/"
+    },
+    {
+      title: "TV10 Rwanda",
+      category: "Rwanda",
+      description: "News and programmes from TV10 Rwanda.",
+      url: "https://www.youtube.com/@officialradiotv10rwanda"
+    },
+    {
+      title: "Al Jazeera",
+      category: "International",
+      description: "International news coverage.",
+      url: "https://www.aljazeera.com/"
+    }
   ],
-  radios: [
-    {name:"Radio Rwanda",description:"Fungura urubuga rwemewe rwa RBA.",url:"https://www.rba.co.rw/"},
-    {name:"Kigali Today",description:"Reba amakuru n'ibitangazamakuru byabo.",url:"https://www.kigalitoday.com/"}
+
+  sports: [
+    {
+      title: "FIFA",
+      description: "International football news.",
+      url: "https://www.fifa.com/"
+    },
+    {
+      title: "ESPN",
+      description: "Sports news and results.",
+      url: "https://www.espn.com/"
+    },
+    {
+      title: "CAF",
+      description: "African football news.",
+      url: "https://www.cafonline.com/"
+    }
   ],
+
+  radio: [
+    {
+      name: "Radio Rwanda",
+      description: "Rwanda radio.",
+      url: "https://www.rba.co.rw/"
+    },
+    {
+      name: "Magic FM",
+      description: "Rwanda radio.",
+      url: "https://www.magicfm.rw/"
+    },
+    {
+      name: "BBC World Service",
+      description: "International radio.",
+      url: "https://www.bbc.com/sounds"
+    },
+    {
+      name: "NPR",
+      description: "International news and programmes.",
+      url: "https://www.npr.org/"
+    },
+    {
+      name: "Deutsche Welle",
+      description: "International radio and news.",
+      url: "https://www.dw.com/"
+    }
+  ],
+
   movies: [
-    {title:"Documentary yawe ya mbere",type:"Free",description:"Shyiramo documentary ufitiye uburenganzira.",videoUrl:""},
-    {title:"Icyegeranyo cya Premium",type:"Premium",description:"Urugero rw'icyiciro cya Premium; si uburyo bwo kwishyura bukora.",videoUrl:""}
+    {
+      title: "Public Domain Movies",
+      description: "Find films that are legally available to watch.",
+      url: "https://archive.org/details/feature_films"
+    },
+    {
+      title: "Documentary Films",
+      description: "Explore documentaries available online.",
+      url: "https://www.pbs.org/"
+    }
   ],
-  /* For real live scores, connect a permitted sports-data provider through a secure backend.
-     Never put a secret API key in this public file. */
-  sportsApiConfigured:false
+
+  newsVideos: [
+    {
+      title: "BBC News Videos",
+      channelUrl: "https://www.youtube.com/@BBCNews"
+    },
+    {
+      title: "TV10 Rwanda Videos",
+      channelUrl: "https://www.youtube.com/@officialradiotv10rwanda"
+    },
+    {
+      title: "RBA Videos",
+      channelUrl: "https://www.youtube.com/@RwandaBroadcastingAgency"
+    }
+  ]
 };
