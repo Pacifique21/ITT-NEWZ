@@ -1,8 +1,7 @@
 
 "use strict";
 
-document.addEventListener("DOMContentLoaded", function () {
-
+document.addEventListener("DOMContentLoaded", () => {
   const $ = (selector) => document.querySelector(selector);
 
   const tvGrid = $("#tvGrid");
@@ -11,37 +10,82 @@ document.addEventListener("DOMContentLoaded", function () {
   const tvSearch = $("#tvSearch");
   const tvPlayer = $("#tvPlayer");
 
-  let allChannels = [];
-  let hls = null;
+  const radioPlayer = $("#radioPlayer");
+  const radioFrame = $("#radioFrame");
 
-  const playlistURL =
+  const PLAYLIST_URL =
     "https://iptv-org.github.io/iptv/countries/";
 
+  let allChannels = [];
+  let hlsPlayer = null;
+
+  // Radio pages: these official pages may allow or block iframe embedding.
+  // If a station blocks embedding, its website cannot be forced to play here.
   const radios = [
-    ["Radio Rwanda", "https://www.rba.co.rw/"],
-    ["Magic FM", "https://www.rba.co.rw/"],
-    ["Radio 10", "https://radiotv10.rw/radio/"],
-    ["Kiss FM", "https://www.kissfm.rw/"],
-    ["KT Radio", "https://www.ktradio.rw/"],
-    ["Radio 1", "https://radio1.rw/"],
-    ["Flash FM", "https://flashfm.rw/"],
-    ["Isango Star", "https://isangostar.rw/"],
-    ["Royal FM", "https://royalfm.rw/"],
-    ["Radio Maria Rwanda", "https://www.radiomaria.rw/"],
-    ["B&B Kigali", "https://www.bbkigalifm.com/"]
+    {
+      name: "Radio 10",
+      page: "https://radiotv10.rw/radio/",
+      stream: ""
+    },
+    {
+      name: "Radio Rwanda",
+      page: "https://www.rba.co.rw/",
+      stream: ""
+    },
+    {
+      name: "Magic FM",
+      page: "https://www.rba.co.rw/radio/7/Magic-Fm",
+      stream: ""
+    },
+    {
+      name: "Flash FM",
+      page: "https://flash.rw/home/",
+      stream: ""
+    },
+    {
+      name: "Kiss FM",
+      page: "https://kissfm.rw/",
+      stream: ""
+    },
+    {
+      name: "KT Radio",
+      page: "https://www.ktradio.rw/",
+      stream: ""
+    },
+    {
+      name: "Radio 1",
+      page: "https://radio1.rw/",
+      stream: ""
+    },
+    {
+      name: "Isango Star",
+      page: "https://isangostar.rw/",
+      stream: ""
+    },
+    {
+      name: "Royal FM",
+      page: "https://www.royalfm.rw/stream",
+      stream: ""
+    },
+    {
+      name: "Radio Maria Rwanda",
+      page: "https://www.radiomaria.rw/",
+      stream: ""
+    },
+    {
+      name: "B&B Kigali",
+      page: "https://www.bbkigalifm.com/",
+      stream: ""
+    }
   ];
 
   function safeURL(value) {
     try {
       const url = new URL(value);
 
-      if (
-        url.protocol === "https:" ||
-        url.protocol === "http:"
-      ) {
+      if (url.protocol === "https:" || url.protocol === "http:") {
         return url.href;
       }
-
     } catch (error) {
       return "";
     }
@@ -52,59 +96,14 @@ document.addEventListener("DOMContentLoaded", function () {
   function showEmpty(container, message) {
     container.replaceChildren();
 
-    const p = document.createElement("p");
-    p.className = "empty";
-    p.textContent = message;
+    const item = document.createElement("p");
+    item.className = "empty";
+    item.textContent = message;
 
-    container.appendChild(p);
+    container.appendChild(item);
   }
 
-  function parseM3U(text) {
-    const lines = text.split(/\r?\n/);
-    const channels = [];
-
-    let current = null;
-
-    lines.forEach(function (line) {
-
-      line = line.trim();
-
-      if (line.startsWith("#EXTINF:")) {
-
-        const name = line.split(",").pop().trim();
-
-        const groupMatch =
-          line.match(/group-title="([^"]*)"/i);
-
-        current = {
-          name: name || "TV Channel",
-          group: groupMatch ? groupMatch[1] : "Television",
-          url: ""
-        };
-
-      } else if (
-        line &&
-        !line.startsWith("#") &&
-        current
-      ) {
-
-        const url = safeURL(line);
-
-        if (url) {
-          current.url = url;
-          channels.push(current);
-        }
-
-        current = null;
-      }
-
-    });
-
-    return channels;
-  }
-
-  function createCard(title, description, label, action) {
-
+  function makeCard(title, description, buttonText, action) {
     const card = document.createElement("article");
     card.className = "card";
 
@@ -116,19 +115,50 @@ document.addEventListener("DOMContentLoaded", function () {
 
     const button = document.createElement("button");
     button.type = "button";
-    button.textContent = label;
+    button.textContent = buttonText;
     button.addEventListener("click", action);
 
     card.append(heading, paragraph, button);
-
     return card;
   }
 
-  function stopTV() {
+  // Read public M3U playlists.
+  function parseM3U(text) {
+    const lines = text.split(/\r?\n/);
+    const channels = [];
+    let current = null;
 
-    if (hls) {
-      hls.destroy();
-      hls = null;
+    for (const rawLine of lines) {
+      const line = rawLine.trim();
+
+      if (line.startsWith("#EXTINF:")) {
+        const name = line.split(",").pop().trim();
+        const groupMatch = line.match(/group-title="([^"]*)"/i);
+
+        current = {
+          name: name || "TV Channel",
+          group: groupMatch ? groupMatch[1] : "Television",
+          url: ""
+        };
+      } else if (line && !line.startsWith("#") && current) {
+        const url = safeURL(line);
+
+        if (url) {
+          current.url = url;
+          channels.push(current);
+        }
+
+        current = null;
+      }
+    }
+
+    return channels;
+  }
+
+  function stopTV() {
+    if (hlsPlayer) {
+      hlsPlayer.destroy();
+      hlsPlayer = null;
     }
 
     tvPlayer.pause();
@@ -137,12 +167,11 @@ document.addEventListener("DOMContentLoaded", function () {
   }
 
   function playTV(channel) {
-
     const url = safeURL(channel.url);
 
     if (!url) {
       $("#playerMessage").textContent =
-        "Channel link ntiboneka.";
+        "Iyi channel nta link ifite.";
       return;
     }
 
@@ -150,62 +179,57 @@ document.addEventListener("DOMContentLoaded", function () {
 
     $("#playingTitle").textContent = channel.name;
     $("#playerMessage").textContent =
-      "Turimo kugerageza gufungura channel...";
+      "Turimo kugerageza gukinisha iyi channel...";
 
     $("#externalTV").href = url;
     $("#externalTV").hidden = false;
 
     if (url.toLowerCase().includes(".m3u8")) {
-
       if (window.Hls && Hls.isSupported()) {
+        hlsPlayer = new Hls();
+        hlsPlayer.loadSource(url);
+        hlsPlayer.attachMedia(tvPlayer);
 
-        hls = new Hls();
-
-        hls.loadSource(url);
-        hls.attachMedia(tvPlayer);
-
-        hls.on(Hls.Events.MANIFEST_PARSED, function () {
-          tvPlayer.play().catch(function () {
+        hlsPlayer.on(Hls.Events.MANIFEST_PARSED, () => {
+          tvPlayer.play().catch(() => {
             $("#playerMessage").textContent =
-              "Kanda Play kugira ngo utangire.";
+              "Kanda Play kuri video kugira ngo utangire.";
           });
         });
 
-        hls.on(Hls.Events.ERROR, function (_event, data) {
+        hlsPlayer.on(Hls.Events.ERROR, (_event, data) => {
           if (data.fatal) {
             $("#playerMessage").textContent =
-              "Stream ntikinirwa hano. Gerageza kuyifungura hanze.";
+              "Stream ntishoboye gukinirwa hano. Gerageza indi channel.";
           }
         });
-
       } else if (
         tvPlayer.canPlayType("application/vnd.apple.mpegurl")
       ) {
-
         tvPlayer.src = url;
-        tvPlayer.play().catch(function () {});
-
+        tvPlayer.play().catch(() => {
+          $("#playerMessage").textContent =
+            "Kanda Play kugira ngo utangire.";
+        });
       } else {
-
         $("#playerMessage").textContent =
-          "Browser ntiyemera iyi video format.";
-
+          "Browser yawe ntiyemera iyi video format.";
       }
-
     } else {
-
       tvPlayer.src = url;
-
-      tvPlayer.play().catch(function () {
+      tvPlayer.play().catch(() => {
         $("#playerMessage").textContent =
-          "Stream ntikinirwa hano. Fungura link yayo hanze.";
+          "Iyi stream yanze gukinira hano.";
       });
-
     }
+
+    $("#live-tv").scrollIntoView({
+      behavior: "smooth",
+      block: "start"
+    });
   }
 
   function renderTV(channels, container) {
-
     container.replaceChildren();
 
     if (!channels.length) {
@@ -213,29 +237,24 @@ document.addEventListener("DOMContentLoaded", function () {
       return;
     }
 
-    channels.forEach(function (channel) {
-
-      const card = createCard(
+    channels.forEach((channel) => {
+      const card = makeCard(
         channel.name,
-        channel.group,
-        "▶ WATCH LIVE",
-        function () {
-          playTV(channel);
-        }
+        channel.group || "TV Channel",
+        "▶ WATCH HERE",
+        () => playTV(channel)
       );
 
       container.appendChild(card);
-
     });
   }
 
   function filterTV() {
+    const query = tvSearch.value.trim().toLowerCase();
 
-    const query = tvSearch.value.toLowerCase().trim();
-
-    const filtered = allChannels.filter(function (channel) {
-      return channel.name.toLowerCase().includes(query);
-    });
+    const filtered = allChannels.filter((channel) =>
+      channel.name.toLowerCase().includes(query)
+    );
 
     renderTV(filtered, tvGrid);
 
@@ -244,29 +263,28 @@ document.addEventListener("DOMContentLoaded", function () {
     }
   }
 
-  async function loadTV(country) {
+  async function loadTV(countryCode) {
+    const country = String(countryCode || "rw").toLowerCase();
 
     $("#tvStatus").textContent =
-      "Turimo gushakisha channels...";
+      "Turimo gushakisha TV...";
 
-    showEmpty(tvGrid, "Loading...");
+    showEmpty(tvGrid, "Turimo kuzana channels...");
 
     try {
-
       const response = await fetch(
-        playlistURL + encodeURIComponent(country) + ".m3u"
+        PLAYLIST_URL + encodeURIComponent(country) + ".m3u"
       );
 
       if (!response.ok) {
-        throw new Error("Playlist ntiyabonetse");
+        throw new Error("Playlist ntibonetse");
       }
 
-      const text = await response.text();
-
-      allChannels = parseM3U(text);
+      const playlist = await response.text();
+      allChannels = parseM3U(playlist);
 
       if (!allChannels.length) {
-        throw new Error("Nta channel yabonetse");
+        throw new Error("Nta channels zabonetse");
       }
 
       filterTV();
@@ -282,14 +300,12 @@ document.addEventListener("DOMContentLoaded", function () {
           "Hitamo Rwanda kugira ngo ubone Rwanda TV."
         );
       }
-
     } catch (error) {
-
       allChannels = [];
 
       showEmpty(
         tvGrid,
-        "Ntibyashobotse kubona channels. Reba internet wongere ugerageze."
+        "TV ntizabonetse. Reba internet cyangwa ugerageze nyuma."
       );
 
       showEmpty(
@@ -298,22 +314,66 @@ document.addEventListener("DOMContentLoaded", function () {
       );
 
       $("#tvStatus").textContent =
-        "Habaye ikibazo mu kubona playlist.";
+        "Habaye ikibazo cyo kubona TV playlist.";
 
-      console.error(error);
+      console.error("TV loading error:", error);
+    }
+  }
+
+  // Radio playback: use direct stream when a verified URL is available.
+  // Otherwise show the station's official webpage inside the page.
+  function playRadio(radio) {
+    const pageURL = safeURL(radio.page);
+    const streamURL = safeURL(radio.stream);
+
+    $("#radioPlaying").textContent = radio.name;
+    $("#radioExternal").hidden = true;
+
+    radioPlayer.pause();
+    radioPlayer.removeAttribute("src");
+    radioPlayer.load();
+    radioPlayer.hidden = true;
+
+    radioFrame.hidden = true;
+    radioFrame.removeAttribute("src");
+
+    if (streamURL) {
+      radioPlayer.hidden = false;
+      radioPlayer.src = streamURL;
+
+      radioPlayer.play().then(() => {
+        $("#radioMessage").textContent =
+          "Uri kumva " + radio.name + " muri ITT NEWS.";
+      }).catch(() => {
+        $("#radioMessage").textContent =
+          "Kanda Play kuri radio player kugira ngo utangire.";
+      });
+
+      return;
+    }
+
+    if (pageURL) {
+      radioFrame.hidden = false;
+      radioFrame.src = pageURL;
+
+      $("#radioMessage").textContent =
+        "Turagerageza kwerekana urubuga rwa " +
+        radio.name +
+        " hano. Niba urubuga rutarwemera kwinjizwa muri ITT NEWS, ntiruzagaragara.";
+
+      $("#radioExternal").href = pageURL;
+      $("#radioExternal").hidden = false;
     }
   }
 
   function renderRadios(search = "") {
+    const query = search.trim().toLowerCase();
 
-    const query = search.toLowerCase().trim();
-
-    const filtered = radios.filter(function (radio) {
-      return radio[0].toLowerCase().includes(query);
-    });
+    const filtered = radios.filter((radio) =>
+      radio.name.toLowerCase().includes(query)
+    );
 
     const radioGrid = $("#radioGrid");
-
     radioGrid.replaceChildren();
 
     if (!filtered.length) {
@@ -321,63 +381,52 @@ document.addEventListener("DOMContentLoaded", function () {
       return;
     }
 
-    filtered.forEach(function (radio) {
-
-      const card = createCard(
-        radio[0],
-        "Fungura urubuga rwa radio kugira ngo wumve ibiganiro.",
-        "🎧 LISTEN",
-        function () {
-
-          const url = safeURL(radio[1]);
-
-          if (url) {
-            window.open(
-              url,
-              "_blank",
-              "noopener,noreferrer"
-            );
-          }
-
-          $("#radioPlaying").textContent = radio[0];
-
-          $("#radioMessage").textContent =
-            "Urubuga rwa radio rufunguwe. Direct audio stream ntirashyizweho.";
-        }
+    filtered.forEach((radio) => {
+      const card = makeCard(
+        radio.name,
+        "Umva iyi radio hano niba yemera embedded playback.",
+        "▶ LISTEN HERE",
+        () => playRadio(radio)
       );
 
       radioGrid.appendChild(card);
-
     });
   }
 
+  // Mobile navigation
+  $("#menuToggle").addEventListener("click", () => {
+    const nav = $("#mainNav");
+    const isOpen = nav.classList.toggle("open");
+
+    $("#menuToggle").setAttribute(
+      "aria-expanded",
+      String(isOpen)
+    );
+  });
+
+  $("#mainNav").querySelectorAll("a").forEach((link) => {
+    link.addEventListener("click", () => {
+      $("#mainNav").classList.remove("open");
+      $("#menuToggle").setAttribute("aria-expanded", "false");
+    });
+  });
+
   $("#year").textContent = new Date().getFullYear();
 
-  $("#loadCountry").addEventListener("click", function () {
+  $("#loadCountry").addEventListener("click", () => {
     loadTV(countrySelect.value);
   });
 
-  countrySelect.addEventListener("change", function () {
+  countrySelect.addEventListener("change", () => {
     loadTV(countrySelect.value);
   });
 
   tvSearch.addEventListener("input", filterTV);
 
-  $("#radioSearch").addEventListener("input", function (event) {
+  $("#radioSearch").addEventListener("input", (event) => {
     renderRadios(event.target.value);
-  });
-
-  $("#menuToggle").addEventListener("click", function () {
-    $("#mainNav").classList.toggle("open");
-  });
-
-  $("#mainNav").querySelectorAll("a").forEach(function (link) {
-    link.addEventListener("click", function () {
-      $("#mainNav").classList.remove("open");
-    });
   });
 
   renderRadios();
   loadTV("rw");
-
 });
