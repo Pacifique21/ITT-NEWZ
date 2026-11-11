@@ -1,291 +1,117 @@
-"use strict";
+// ITT NEWS FILMS PLAYER
 
-const countrySelect = document.getElementById("countrySelect");
-const loadCountryButton = document.getElementById("loadCountry");
-const tvSearch = document.getElementById("tvSearch");
-const tvGrid = document.getElementById("tvGrid");
-const tvPlayer = document.getElementById("tvPlayer");
-const tvStatus = document.getElementById("tvStatus");
-const playingTitle = document.getElementById("playingTitle");
-
-const radioPlayer = document.getElementById("radioPlayer");
-const radioUrl = document.getElementById("radioUrl");
-const playRadioButton = document.getElementById("playRadio");
-const radioStatus = document.getElementById("radioStatus");
-const radioTitle = document.getElementById("radioTitle");
-
-let channels = [];
-let hls = null;
-
-function showTVStatus(message) {
-  tvStatus.textContent = message;
-}
-
-function showRadioStatus(message) {
-  radioStatus.textContent = message;
-}
-
-function validURL(value) {
-  try {
-    const url = new URL(value);
-    return url.protocol === "https:" || url.protocol === "http:";
-  } catch {
-    return false;
+const films = [
+  {
+    title: "Big Buck Bunny",
+    year: "2008",
+    category: "Animation / Comedy",
+    video: "https://upload.wikimedia.org/wikipedia/commons/c/c0/Big_Buck_Bunny_4K.webm/Big_Buck_Bunny_4K.webm.720p.vp9.webm",
+    description: "A funny animated adventure from Blender Foundation.",
+    credit: "Blender Foundation — CC BY 3.0",
+    source: "https://peach.blender.org/about/"
+  },
+  {
+    title: "Sintel",
+    year: "2010",
+    category: "Fantasy / Animation",
+    video: "https://upload.wikimedia.org/wikipedia/commons/f/f1/Sintel_movie_4K.webm/Sintel_movie_4K.webm.720p.vp9.webm",
+    description: "An animated fantasy adventure from Blender Foundation.",
+    credit: "Blender Foundation — CC BY 3.0",
+    source: "https://studio.blender.org/films/sintel/"
+  },
+  {
+    title: "Tears of Steel",
+    year: "2012",
+    category: "Science Fiction",
+    video: "https://download.blender.org/demo/movies/ToS/tears_of_steel_720p.mov",
+    description: "A science-fiction film made by Blender Institute.",
+    credit: "Blender Foundation — CC BY 3.0",
+    source: "https://mango.blender.org/"
   }
+];
+
+const filmGrid = document.getElementById("filmGrid");
+const filmSearch = document.getElementById("filmSearch");
+const filmPlayer = document.getElementById("filmPlayer");
+const filmTitle = document.getElementById("filmTitle");
+const filmDescription = document.getElementById("filmDescription");
+const filmStatus = document.getElementById("filmStatus");
+const filmCredit = document.getElementById("filmCredit");
+
+function showFilm(film) {
+  filmPlayer.pause();
+
+  filmTitle.textContent = film.title;
+  filmDescription.textContent =
+    `${film.year} · ${film.category} — ${film.description}`;
+
+  filmCredit.textContent = film.credit;
+  filmStatus.textContent = "Turimo gufungura filime...";
+
+  filmPlayer.src = film.video;
+  filmPlayer.load();
+
+  filmPlayer.play()
+    .then(() => {
+      filmStatus.textContent = "Filime iri gukinira muri ITT NEWS.";
+    })
+    .catch(error => {
+      console.error("Film playback error:", error);
+      filmStatus.textContent =
+        "Filime ntiyafungutse. Gerageza indi cyangwa urebe internet yawe.";
+    });
 }
 
-function parseM3U(text) {
-  const lines = text.split(/\r?\n/);
-  const result = [];
-  let currentName = "";
+function renderFilms(list) {
+  filmGrid.replaceChildren();
 
-  for (const rawLine of lines) {
-    const line = rawLine.trim();
-
-    if (line.startsWith("#EXTINF")) {
-      const comma = line.lastIndexOf(",");
-      currentName = comma >= 0
-        ? line.slice(comma + 1).trim()
-        : "Unknown channel";
-    } else if (
-      line &&
-      !line.startsWith("#") &&
-      validURL(line)
-    ) {
-      result.push({
-        name: currentName || "TV Channel",
-        url: line
-      });
-
-      currentName = "";
-    }
-  }
-
-  return result;
-}
-
-function renderChannels(list) {
-  tvGrid.replaceChildren();
-
-  if (!list.length) {
-    const message = document.createElement("p");
-    message.className = "muted";
-    message.textContent = "Nta channel yabonetse. Gerageza ikindi gihugu.";
-    tvGrid.appendChild(message);
+  if (list.length === 0) {
+    filmGrid.textContent = "Nta filime ibonetse.";
     return;
   }
 
-  list.forEach((channel) => {
+  list.forEach(film => {
     const card = document.createElement("article");
-    card.className = "channel-card";
+    card.className = "film-card";
 
     const title = document.createElement("h3");
-    title.textContent = channel.name;
+    title.textContent = film.title;
+
+    const details = document.createElement("p");
+    details.textContent = `${film.year} · ${film.category}`;
 
     const button = document.createElement("button");
     button.type = "button";
-    button.textContent = "▶ Watch Channel";
+    button.textContent = "▶ REBA FILIME";
 
     button.addEventListener("click", () => {
-      playTV(channel);
+      showFilm(film);
     });
 
-    card.append(title, button);
-    tvGrid.appendChild(card);
+    card.append(title, details, button);
+    filmGrid.appendChild(card);
   });
 }
 
-async function loadChannels() {
-  const country = countrySelect.value;
+filmSearch.addEventListener("input", () => {
+  const search = filmSearch.value.toLowerCase();
 
-  tvGrid.replaceChildren();
-  showTVStatus("Turimo gushaka channels...");
-
-  const playlistURL =
-    `https://iptv-org.github.io/iptv/countries/${country}.m3u`;
-
-  try {
-    const response = await fetch(playlistURL, {
-      cache: "no-store"
-    });
-
-    if (!response.ok) {
-      throw new Error(`Playlist error: ${response.status}`);
-    }
-
-    const text = await response.text();
-    channels = parseM3U(text);
-
-    renderChannels(channels);
-
-    showTVStatus(
-      `${channels.length} channels zabonetse. Hitamo imwe kugira ngo uyirebe.`
-    );
-
-    filterChannels();
-  } catch (error) {
-    console.error("TV playlist error:", error);
-
-    channels = [];
-    renderChannels([]);
-
-    showTVStatus(
-      "Ntibyashobotse kuzana channels. Reba internet cyangwa wongere ugerageze."
-    );
-  }
-}
-
-function stopCurrentTV() {
-  if (hls) {
-    hls.destroy();
-    hls = null;
-  }
-
-  tvPlayer.pause();
-  tvPlayer.removeAttribute("src");
-  tvPlayer.load();
-}
-
-async function playTV(channel) {
-  stopCurrentTV();
-
-  playingTitle.textContent = channel.name;
-  showTVStatus("Turimo gufungura channel...");
-
-  const url = channel.url;
-  const isHLS = /\.m3u8($|\?)/i.test(url);
-
-  try {
-    if (isHLS && window.Hls && Hls.isSupported()) {
-      hls = new Hls({
-        enableWorker: true,
-        lowLatencyMode: false
-      });
-
-      hls.loadSource(url);
-      hls.attachMedia(tvPlayer);
-
-      hls.on(Hls.Events.MANIFEST_PARSED, async () => {
-        showTVStatus("Channel yafungutse. Turimo gutangira amashusho...");
-
-        try {
-          await tvPlayer.play();
-        } catch {
-          showTVStatus("Kanda Play kuri video kugira ngo itangire.");
-        }
-      });
-
-      hls.on(Hls.Events.ERROR, (event, data) => {
-        if (data.fatal) {
-          console.error("HLS fatal error:", data);
-
-          showTVStatus(
-            "Iyi channel yanze gukina. Ishobora kuba idakora, ifunze, cyangwa itemera gukinirwa kuri website."
-          );
-
-          stopCurrentTV();
-        }
-      });
-
-      return;
-    }
-
-    // Safari ishobora gukina HLS idakoresheje Hls.js.
-    if (
-      isHLS &&
-      tvPlayer.canPlayType("application/vnd.apple.mpegurl")
-    ) {
-      tvPlayer.src = url;
-    } else {
-      // Direct MP4 cyangwa izindi formats browser yemera.
-      tvPlayer.src = url;
-    }
-
-    tvPlayer.load();
-
-    try {
-      await tvPlayer.play();
-      showTVStatus("Channel iri gukina.");
-    } catch {
-      showTVStatus(
-        "Kanda Play kuri video. Niramuka yanze, stream ishobora kuba idakora cyangwa itemera browser."
-      );
-    }
-  } catch (error) {
-    console.error("TV playback error:", error);
-    showTVStatus("Habaye ikibazo mu gufungura iyi channel.");
-  }
-}
-
-function filterChannels() {
-  const query = tvSearch.value.trim().toLowerCase();
-
-  const filtered = channels.filter((channel) =>
-    channel.name.toLowerCase().includes(query)
+  const results = films.filter(film =>
+    `${film.title} ${film.category} ${film.year}`
+      .toLowerCase()
+      .includes(search)
   );
 
-  renderChannels(filtered);
-}
-
-// RADIO PLAYER
-
-playRadioButton.addEventListener("click", async () => {
-  const url = radioUrl.value.trim();
-
-  if (!validURL(url)) {
-    showRadioStatus(
-      "Shyiramo URL nyayo itangirira kuri https:// cyangwa http://."
-    );
-    return;
-  }
-
-  radioPlayer.pause();
-  radioPlayer.removeAttribute("src");
-  radioPlayer.load();
-
-  radioTitle.textContent = "ITT NEWS Radio";
-  showRadioStatus("Turimo gufungura radio...");
-
-  radioPlayer.src = url;
-  radioPlayer.load();
-
-  try {
-    await radioPlayer.play();
-    showRadioStatus("Radio iri gukina.");
-  } catch (error) {
-    console.error("Radio playback error:", error);
-
-    showRadioStatus(
-      "Radio yanze gukina. Reba niba iyi URL ari direct audio stream kandi yemera gukinirwa kuri website."
-    );
-  }
+  renderFilms(results);
 });
 
-radioPlayer.addEventListener("error", () => {
-  showRadioStatus(
-    "Audio stream ntiyafungutse. URL ishobora kuba itari yo cyangwa server ikaba itayemera."
-  );
+filmPlayer.addEventListener("error", () => {
+  filmStatus.textContent =
+    "Iyi video ntiyashoboye gukinwa. Bishobora guterwa na format cyangwa stream.";
 });
 
-// BUTTONS AND SEARCH
-
-loadCountryButton.addEventListener("click", loadChannels);
-tvSearch.addEventListener("input", filterChannels);
-
-tvPlayer.addEventListener("playing", () => {
-  showTVStatus("TV iri gukina.");
+filmPlayer.addEventListener("playing", () => {
+  filmStatus.textContent = "Filime iri gukinira muri ITT NEWS.";
 });
 
-tvPlayer.addEventListener("waiting", () => {
-  showTVStatus("TV iracyafungura amashusho...");
-});
-
-tvPlayer.addEventListener("error", () => {
-  showTVStatus(
-    "Video ntiyashoboye gukina. Gerageza indi channel."
-  );
-});
-
-// LOAD RWANDA CHANNELS WHEN THE WEBSITE OPENS
-
-loadChannels();
+renderFilms(films);
